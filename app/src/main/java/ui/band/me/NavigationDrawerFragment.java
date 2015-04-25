@@ -47,11 +47,17 @@ public class NavigationDrawerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+        //return inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+
+        View rootView = inflater.inflate(
+                R.layout.fragment_navigation_drawer, container, false);
+        rootView.setFitsSystemWindows(true);
+        return rootView;
+
     }
 
 
-    public void setUp(int fragment_id, DrawerLayout drawerLayout, Toolbar toolbar) {
+    public void setUp(int fragment_id, DrawerLayout drawerLayout, final Toolbar toolbar) {
         this.mContainerView = getActivity().findViewById(fragment_id);
         this.mDrawerLayout = drawerLayout;
         this.mDrawerToggle = new ActionBarDrawerToggle(getActivity(),drawerLayout,toolbar,R.string.drawer_open,R.string.drawer_close){
@@ -71,6 +77,12 @@ public class NavigationDrawerFragment extends Fragment {
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
                 getActivity().invalidateOptionsMenu();
+            }
+
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                if(slideOffset<0.6)
+                    toolbar.setAlpha(1-slideOffset);
             }
         };
         if(!mUserLearnedDrawer && !mFromSavedInstanceState) {
