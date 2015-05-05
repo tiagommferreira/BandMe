@@ -14,5 +14,7 @@ public interface Keys {
         public static final String KEY_POPULARITY = "popularity";
         public static final String KEY_TYPE = "type";
         public static final String KEY_URI = "uri";
+        public static final String KEY_ARTISTS = "artists";
+        public static final String KEY_ITEMS = "items";
     }
 }
