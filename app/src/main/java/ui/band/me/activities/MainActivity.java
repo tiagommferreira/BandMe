@@ -1,16 +1,32 @@
-package ui.band.me;
+package ui.band.me.activities;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 
-public class MainActivity extends ActionBarActivity {
+import ui.band.me.API.APICallerSingleton;
+import ui.band.me.fragments.NavigationDrawerFragment;
+import ui.band.me.R;
+
+public class MainActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
+    private Button nextButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +45,31 @@ public class MainActivity extends ActionBarActivity {
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerLayout.setStatusBarBackground(R.color.primaryColorDark);
 
+        nextButton = (Button) findViewById(R.id.nextButton);
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(),BandActivity.class));
+            }
+        });
+        /*
+        bandName = (TextView) findViewById(R.id.BandName);
+
+        RequestQueue requestQueue = APICallerSingleton.getsInstance().getRequestQueue();
+        StringRequest request = new StringRequest(Request.Method.GET,"http://php.net/",new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                bandName.setText(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                bandName.setText(error.getMessage());
+            }
+        });
+
+        requestQueue.add(request);
+        */
     }
 
 

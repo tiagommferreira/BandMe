@@ -1,4 +1,4 @@
-package ui.band.me;
+package ui.band.me.fragments;
 
 
 import android.content.Context;
@@ -19,6 +19,10 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import ui.band.me.R;
+import ui.band.me.adapters.DrawerRecyclerAdapter;
+import ui.band.me.extras.DrawerItemInfo;
 
 
 /**

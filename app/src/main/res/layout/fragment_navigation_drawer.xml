@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#EEE"
-    tools:context="ui.band.me.NavigationDrawerFragment">
+    tools:context="ui.band.me.fragments.NavigationDrawerFragment">
 
     <LinearLayout
         android:id="@+id/containerDrawerImage"

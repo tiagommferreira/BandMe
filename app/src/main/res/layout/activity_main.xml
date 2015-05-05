@@ -16,11 +16,12 @@
             android:id="@+id/app_bar"
             layout="@layout/app_bar" />
 
-        <TextView
+        <Button
+            android:id="@+id/nextButton"
+            android:layout_below="@+id/app_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/app_bar"
-            android:text="@string/hello_world" />
+            android:text="Band"/>
 
     </RelativeLayout>
 
@@ -30,7 +31,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         app:layout="@layout/fragment_navigation_drawer"
-        android:name="ui.band.me.NavigationDrawerFragment"
+        android:name="ui.band.me.fragments.NavigationDrawerFragment"
         tools:layout="@layout/fragment_navigation_drawer" />
 
 </android.support.v4.widget.DrawerLayout>

@@ -1,9 +1,9 @@
-package ui.band.me;
+package ui.band.me.extras;
 
 /**
  * Created by Tiago on 26/04/2015.
  */
 public class DrawerItemInfo {
-    int iconId;
-    String title;
+    public int iconId;
+    public String title;
 }

@@ -1,4 +1,4 @@
-package ui.band.me;
+package ui.band.me.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +10,9 @@ import android.widget.TextView;
 
 import java.util.Collections;
 import java.util.List;
+
+import ui.band.me.R;
+import ui.band.me.extras.DrawerItemInfo;
 
 /**
  * Created by Tiago on 26/04/2015.
