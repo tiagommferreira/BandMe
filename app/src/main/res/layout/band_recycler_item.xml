@@ -5,19 +5,19 @@
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
     android:orientation="horizontal"
-    card_view:cardCornerRadius="2dp">
+    card_view:cardCornerRadius="0dp">
 
     <RelativeLayout
-        android:background="@drawable/custom_bg"
-        android:clickable="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/custom_bg"
+        android:clickable="true"
         android:padding="16dp">
 
         <ImageView
             android:id="@+id/band_pic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="100px"
+            android:layout_height="100px"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_marginRight="16dp" />

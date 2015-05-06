@@ -12,6 +12,7 @@ public class Band {
     private int followers;
     private int popularity;
     private String uri;
+    private String imageLink;
 
     public Band() {
 
@@ -71,5 +72,13 @@ public class Band {
 
     public void setUri(String uri) {
         this.uri = uri;
+    }
+
+    public String getImageLink() {
+        return imageLink;
+    }
+
+    public void setImageLink(String imageLink) {
+        this.imageLink = imageLink;
     }
 }

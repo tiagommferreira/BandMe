@@ -8,23 +8,33 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.Collections;
-import java.util.List;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 
+import java.util.ArrayList;
+
+import ui.band.me.API.APICallerSingleton;
 import ui.band.me.R;
 import ui.band.me.extras.Band;
-import ui.band.me.extras.DrawerItemInfo;
 
 /**
  * Created by Tiago on 05/05/2015.
  */
 public class BandListAdapter extends RecyclerView.Adapter<BandListAdapter.BandViewHolder> {
     private LayoutInflater inflater;
-    private List<Band> data = Collections.emptyList();
+    private ArrayList<Band> listBands = new ArrayList<>();
+    private APICallerSingleton callerSingleton;
+    private ImageLoader imageLoader;
 
-    public BandListAdapter(Context context, List<Band> data) {
+    public BandListAdapter(Context context) {
         this.inflater = LayoutInflater.from(context);
-        this.data = data;
+        this.callerSingleton = APICallerSingleton.getsInstance();
+        this.imageLoader = callerSingleton.getImageLoader();
+    }
+
+    public void setBandList(ArrayList<Band> listBands) {
+        this.listBands = listBands;
+        notifyItemRangeChanged(0,listBands.size());
     }
 
     @Override
@@ -35,23 +45,37 @@ public class BandListAdapter extends RecyclerView.Adapter<BandListAdapter.BandVi
     }
 
     @Override
-    public void onBindViewHolder(BandViewHolder bandViewHolder, int pos) {
-        Band currentRow = data.get(pos);
-        bandViewHolder.bandName.setText(currentRow.getName());
+    public void onBindViewHolder(final BandViewHolder bandViewHolder, int pos) {
+        Band currentBand = listBands.get(pos);
+        bandViewHolder.bandName.setText(currentBand.getName());
         //bandViewHolder.bandGenres.setText(currentRow.getGenres());
-        //bandViewHolder.icon.setImageResource(currentRow.iconId);
+
+        String imageURL = currentBand.getImageLink();
+        if(imageURL != null) {
+            imageLoader.get(imageURL,new ImageLoader.ImageListener() {
+                @Override
+                public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
+                    bandViewHolder.bandPic.setImageBitmap(response.getBitmap());
+                }
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                }
+            });
+        }
     }
 
     @Override
     public int getItemCount() {
-        return data.size();
+        return listBands.size();
     }
 
     class BandViewHolder extends RecyclerView.ViewHolder {
 
-        TextView bandName;
-        TextView bandGenres;
-        ImageView bandPic;
+        private TextView bandName;
+        private TextView bandGenres;
+        private ImageView bandPic;
 
         public BandViewHolder(View itemView) {
             super(itemView);

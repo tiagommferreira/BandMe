@@ -95,7 +95,7 @@ public class BandActivity extends AppCompatActivity {
                 }
             }
 
-            if(genresList.size() == 0) {
+            if(genresList.size() == 0) {/**/
                 mBandGenres.setText("Genres: No defined genres");
             }
             else {

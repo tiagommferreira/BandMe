@@ -9,11 +9,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -22,6 +24,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.dexafree.materialList.cards.BigImageButtonsCard;
+import com.dexafree.materialList.cards.OnButtonPressListener;
+import com.dexafree.materialList.controller.RecyclerItemClickListener;
+import com.dexafree.materialList.model.Card;
+import com.dexafree.materialList.model.CardItemView;
+import com.dexafree.materialList.view.MaterialListView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -53,7 +61,9 @@ public class MainActivity extends AppCompatActivity {
     private ImageLoader mImageLoader;
     private RequestQueue mRequestQueue;
 
-    private ArrayList<Band> mBandList;
+    private ArrayList<Band> mBandList = new ArrayList<>();
+    private MaterialListView mListView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,14 +82,11 @@ public class MainActivity extends AppCompatActivity {
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerLayout.setStatusBarBackground(R.color.primaryColorDark);
 
-        mBandList = new ArrayList<>();
         mAPIcaller = APICallerSingleton.getsInstance();
         mRequestQueue = mAPIcaller.getRequestQueue();
-
-        sendBandRequest("Muse");
-
+        /*
         this.recyclerView = (RecyclerView) findViewById(R.id.band_list);
-        this.recyclerAdapter = new BandListAdapter(this,mBandList);
+        this.recyclerAdapter = new BandListAdapter(this);
         recyclerView.setAdapter(recyclerAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -94,6 +101,45 @@ public class MainActivity extends AppCompatActivity {
             public void onLongClick(View view, int position) {
             }
         }));
+        */
+        sendBandRequest("Pendulum");
+        mListView = (MaterialListView) findViewById(R.id.material_bandlistview);
+
+    }
+
+    private void addCards() {
+
+        for(Band band: mBandList) {
+            BigImageButtonsCard card = new BigImageButtonsCard(this);
+            card.setTitle(band.getName());
+            card.setDescription("METER GENERO AQUI");
+            card.setDrawable(band.getImageLink());
+            card.setLeftButtonText("SHARE");
+            card.setRightButtonText("MORE");
+
+            card.setOnLeftButtonPressedListener(new OnButtonPressListener() {
+                @Override
+                public void onButtonPressedListener(View view, Card card) {
+                    Toast.makeText(getApplicationContext(),
+                            "You have pressed the left button",
+                            Toast.LENGTH_SHORT
+                    ).show();
+                }
+            });
+
+
+            card.setOnRightButtonPressedListener(new OnButtonPressListener() {
+                @Override
+                public void onButtonPressedListener(View view, Card card) {
+                    Toast.makeText(getApplicationContext(),
+                            "You have pressed the right button",
+                            Toast.LENGTH_SHORT
+                    ).show();
+                }
+            });
+
+            mListView.add(card);
+        }
 
     }
 
@@ -101,7 +147,9 @@ public class MainActivity extends AppCompatActivity {
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,getRequestURL(bandName),new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                parseBandJSON(response);
+                mBandList = parseBandJSON(response);
+                //recyclerAdapter.setBandList(mBandList);
+                addCards();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -113,47 +161,49 @@ public class MainActivity extends AppCompatActivity {
         mRequestQueue.add(request);
     }
 
-    private void parseBandJSON(JSONObject response) {
-        if(response == null || response.length()==0) {
-            return;
-        }
+    private ArrayList<Band> parseBandJSON(JSONObject response) {
+        ArrayList<Band> listBands = new ArrayList<>();
 
-        try {
-            JSONObject artistsObject = response.getJSONObject(Keys.BandKeys.KEY_ARTISTS);
+        if(response != null && response.length()>0) {
+            try {
+                JSONObject artistsObject = response.getJSONObject(Keys.BandKeys.KEY_ARTISTS);
 
-            JSONArray itemsArray = artistsObject.getJSONArray(Keys.BandKeys.KEY_ITEMS);
+                JSONArray itemsArray = artistsObject.getJSONArray(Keys.BandKeys.KEY_ITEMS);
 
-            for(int i = 0; i < itemsArray.length();i++) {
-                Band band = new Band();
-                JSONObject currentItem = itemsArray.getJSONObject(i);
-                band.setId(currentItem.getString(Keys.BandKeys.KEY_ID));
-                band.setName(currentItem.getString(Keys.BandKeys.KEY_NAME));
+                for(int i = 0; i < itemsArray.length();i++) {
+                    Band band = new Band();
+                    JSONObject currentItem = itemsArray.getJSONObject(i);
+                    band.setId(currentItem.getString(Keys.BandKeys.KEY_ID));
+                    band.setName(currentItem.getString(Keys.BandKeys.KEY_NAME));
 
-                JSONArray genresArray = currentItem.getJSONArray(Keys.BandKeys.KEY_GENRES);
-                ArrayList<String> genres = new ArrayList<>();
+                    JSONArray genresArray = currentItem.getJSONArray(Keys.BandKeys.KEY_GENRES);
+                    ArrayList<String> genres = new ArrayList<>();
 
-                for(int j = 0; j<genresArray.length();j++) {
-                    genres.add(genresArray.getString(j));
+                    for(int j = 0; j<genresArray.length();j++) {
+                        genres.add(genresArray.getString(j));
+                    }
+
+                    band.setGenres(genres);
+
+                    band.setFollowers(currentItem.getJSONObject(Keys.BandKeys.KEY_FOLLOWERS).getInt("total"));
+                    band.setPopularity(currentItem.getInt(Keys.BandKeys.KEY_POPULARITY));
+                    band.setUri(currentItem.getString(Keys.BandKeys.KEY_URI));
+                    band.setImageLink(currentItem.getJSONArray(Keys.BandKeys.KEY_IMAGES).getJSONObject(0).getString("url"));
+
+
+                    listBands.add(band);
                 }
 
-                band.setGenres(genres);
-
-                band.setFollowers(currentItem.getJSONObject(Keys.BandKeys.KEY_FOLLOWERS).getInt("total"));
-                band.setPopularity(currentItem.getInt(Keys.BandKeys.KEY_POPULARITY));
-                band.setUri(currentItem.getString(Keys.BandKeys.KEY_URI));
-
-
-                mBandList.add(band);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
 
+        return listBands;
     }
 
     public String getRequestURL(String name) {
-        return APICallerSingleton.URL_SPOTIFY_SEARCH + "?q=" + name + "&type=artist";
+        return APICallerSingleton.URL_SPOTIFY_SEARCH + "?q=" + name.replaceAll(" ","+") + "&type=artist";
     }
 
     @Override
