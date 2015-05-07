@@ -43,6 +43,7 @@ import ui.band.me.API.APICallerSingleton;
 import ui.band.me.adapters.BandListAdapter;
 import ui.band.me.adapters.DrawerRecyclerAdapter;
 import ui.band.me.extras.Band;
+import ui.band.me.extras.BandCard;
 import ui.band.me.extras.DrawerItemInfo;
 import ui.band.me.extras.Keys;
 import ui.band.me.fragments.NavigationDrawerFragment;
@@ -84,25 +85,8 @@ public class MainActivity extends AppCompatActivity {
 
         mAPIcaller = APICallerSingleton.getsInstance();
         mRequestQueue = mAPIcaller.getRequestQueue();
-        /*
-        this.recyclerView = (RecyclerView) findViewById(R.id.band_list);
-        this.recyclerAdapter = new BandListAdapter(this);
-        recyclerView.setAdapter(recyclerAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(this,recyclerView, new RecyclerTouchListener.ClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-                //TODO: meter a iniciar as atividades
-                //startActivity(new Intent(getActivity(),SubActivity.class));
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-            }
-        }));
-        */
-        sendBandRequest("Pendulum");
+        sendBandRequest("Muse");
         mListView = (MaterialListView) findViewById(R.id.material_bandlistview);
 
     }
@@ -110,12 +94,13 @@ public class MainActivity extends AppCompatActivity {
     private void addCards() {
 
         for(Band band: mBandList) {
-            BigImageButtonsCard card = new BigImageButtonsCard(this);
+            BandCard card = new BandCard(this);
             card.setTitle(band.getName());
-            card.setDescription("METER GENERO AQUI");
+            card.setDescription(String.valueOf(band.getGenres()));
             card.setDrawable(band.getImageLink());
             card.setLeftButtonText("SHARE");
             card.setRightButtonText("MORE");
+            card.setRightButtonTextColor(getResources().getColor(R.color.accentColor));
 
             card.setOnLeftButtonPressedListener(new OnButtonPressListener() {
                 @Override
