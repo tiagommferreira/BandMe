@@ -51,8 +51,8 @@ public class BandCardView extends CardItemView<BandCard> {
             }
         }
 
-        setLeftButton(card);
-        setRightButton(card);
+        //setLeftButton(card);
+        //setRightButton(card);
 
     }
 

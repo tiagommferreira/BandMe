@@ -1,13 +1,31 @@
 package ui.band.me.activities;
 
+import android.app.Fragment;
+import android.app.SearchManager;
+import android.content.Context;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -25,6 +43,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Field;
+import java.text.Normalizer;
 import java.util.ArrayList;
 
 import ui.band.me.API.APICallerSingleton;
@@ -33,6 +53,8 @@ import ui.band.me.extras.BandCard;
 import ui.band.me.extras.Keys;
 import ui.band.me.fragments.NavigationDrawerFragment;
 import ui.band.me.R;
+
+import static android.graphics.Color.*;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,6 +65,10 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<Band> mBandList = new ArrayList<>();
     private MaterialListView mListView;
+
+    private View searchContainer;
+    private EditText toolbarSearchView;
+    private ImageView searchClearButton;
 
 
     @Override
@@ -65,7 +91,8 @@ public class MainActivity extends AppCompatActivity {
         mAPIcaller = APICallerSingleton.getsInstance();
         mRequestQueue = mAPIcaller.getRequestQueue();
 
-        sendBandRequest("Muse");
+        setUpSearch();
+
         mListView = (MaterialListView) findViewById(R.id.material_bandlistview);
         mListView.addOnItemTouchListener(new RecyclerItemClickListener.OnItemClickListener() {
 
@@ -82,38 +109,79 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void setUpSearch() {
+        searchContainer = findViewById(R.id.search_container);
+        toolbarSearchView = (EditText) findViewById(R.id.search_view);
+        searchClearButton = (ImageView) findViewById(R.id.search_clear);
+
+        try {
+            // Set cursor colour to white
+            // http://stackoverflow.com/a/26544231/1692770
+            // https://github.com/android/platform_frameworks_base/blob/kitkat-release/core/java/android/widget/TextView.java#L562-564
+            Field f = TextView.class.getDeclaredField("mCursorDrawableRes");
+            f.setAccessible(true);
+            f.set(toolbarSearchView, R.xml.cursor);
+        } catch (Exception ignored) {
+        }
+
+        // Search text changed listener
+        toolbarSearchView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                searchClearButton.setEnabled(true);
+                searchClearButton.setVisibility(View.VISIBLE);
+                sendBandRequest(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
+        // Clear search text when clear button is tapped
+        searchClearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toolbarSearchView.setText("");
+                searchClearButton.setEnabled(false);
+                searchClearButton.setVisibility(View.INVISIBLE);
+            }
+        });
+
+    }
+
     private void addCards() {
+
 
         for(Band band: mBandList) {
             BandCard card = new BandCard(this);
             card.setTitle(band.getName());
-            card.setDescription(String.valueOf(band.getGenres()));
+
+            /*
+            String genres = "";
+
+            if(band.getGenres().size() == 0) {
+                genres = "Undefined genre";
+            }
+            else {
+                ArrayList<String> bandGenres = band.getGenres();
+
+                genres += bandGenres.get(0);
+
+                for (int i = 1; i < bandGenres.size(); i++) {
+                    genres += ", " + bandGenres.get(i);
+                }
+            }
+            */
+
+            card.setDescription(band.getFollowers() + " people like this");
+
             card.setDrawable(band.getImageLink());
-            card.setLeftButtonText("SHARE");
-            card.setRightButtonText("MORE");
-            card.setRightButtonTextColor(getResources().getColor(R.color.accentColor));
-
-            card.setOnLeftButtonPressedListener(new OnButtonPressListener() {
-                @Override
-                public void onButtonPressedListener(View view, Card card) {
-                    Log.d("Card", "leftButton");
-                    Toast.makeText(getApplicationContext(),
-                            "You have pressed the left button",
-                            Toast.LENGTH_SHORT
-                    ).show();
-                }
-            });
-
-
-            card.setOnRightButtonPressedListener(new OnButtonPressListener() {
-                @Override
-                public void onButtonPressedListener(View view, Card card) {
-                    Toast.makeText(getApplicationContext(),
-                            "You have pressed the right button",
-                            Toast.LENGTH_SHORT
-                    ).show();
-                }
-            });
 
             mListView.add(card);
         }
@@ -125,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject response) {
                 mBandList = parseBandJSON(response);
-                //recyclerAdapter.setBandList(mBandList);
+                removePrevCards();
                 addCards();
             }
         }, new Response.ErrorListener() {
@@ -133,9 +201,13 @@ public class MainActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
 
             }
-        });
+        });/**/
 
         mRequestQueue.add(request);
+    }
+
+    private void removePrevCards() {
+        mListView.clear();
     }
 
     private ArrayList<Band> parseBandJSON(JSONObject response) {
@@ -180,13 +252,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public String getRequestURL(String name) {
-        return APICallerSingleton.URL_SPOTIFY_SEARCH + "?q=" + name.replaceAll(" ","+") + "&type=artist";
+        return Normalizer.normalize(APICallerSingleton.URL_SPOTIFY_SEARCH + "?q=" + name.replaceAll(" ", "+") + "&type=artist", Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+
         return true;
     }
 
@@ -201,7 +275,6 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }
