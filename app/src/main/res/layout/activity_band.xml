@@ -3,33 +3,100 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <include
         android:id="@+id/app_bar"
         layout="@layout/app_bar_band" />
 
-    <RelativeLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="220dp"
-            android:adjustViewBounds="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:scaleType="centerCrop"
-            android:id="@+id/bandPic"/>
-
-        <android.support.v7.widget.RecyclerView
-            android:layout_below="@+id/bandPic"
-            android:id="@+id/bandContent"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-        </android.support.v7.widget.RecyclerView>
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:adjustViewBounds="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:scaleType="centerCrop"
+                android:id="@+id/bandPic"/>
 
+            <RelativeLayout
+                android:layout_below="@+id/bandPic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding = "16dp">
 
-    </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/tile1"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:elevation="2dp"
+                    android:clickable="true"
+                    android:background="@drawable/custom_bg">
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/tile2"
+                    android:layout_below="@id/tile1"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="20dp"
+                    android:elevation="2dp"
+                    android:clickable="true"
+                    android:background="@drawable/custom_bg">
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/tile3"
+                    android:layout_toRightOf="@id/tile1"
+                    android:layout_width="220dp"
+                    android:layout_height="220dp"
+                    android:layout_marginLeft="20dp"
+                    android:elevation="2dp"
+                    android:clickable="true"
+                    android:background="@drawable/custom_bg">
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/tile4"
+                    android:layout_below="@id/tile2"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="20dp"
+                    android:elevation="2dp"
+                    android:clickable="true"
+                    android:background="@drawable/custom_bg">
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/tile5"
+                    android:layout_below="@id/tile2"
+                    android:layout_toRightOf="@id/tile4"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginLeft="20dp"
+                    android:elevation="2dp"
+                    android:clickable="true"
+                    android:background="@drawable/custom_bg">
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </ScrollView>
 
 
 

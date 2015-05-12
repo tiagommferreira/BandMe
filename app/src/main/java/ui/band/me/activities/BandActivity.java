@@ -30,11 +30,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 import ui.band.me.API.APICallerSingleton;
 import ui.band.me.R;
 import ui.band.me.adapters.DrawerRecyclerAdapter;
 import ui.band.me.extras.Band;
+import ui.band.me.extras.DrawerItemInfo;
 import ui.band.me.extras.Keys;
 import ui.band.me.listeners.RecyclerTouchListener;
 
@@ -44,8 +47,6 @@ import ui.band.me.listeners.RecyclerTouchListener;
 public class BandActivity extends AppCompatActivity {
 
     private ImageView bandPicture;
-    private RecyclerView bandContent;
-    private DrawerRecyclerAdapter recyclerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,26 +67,6 @@ public class BandActivity extends AppCompatActivity {
         bandPicture = (ImageView) findViewById(R.id.bandPic);
         Picasso.with(this).load(band.getImageLink()).into(bandPicture);
 
-        this.bandContent = (RecyclerView) findViewById(R.id.drawer_list);
-        //this.recyclerAdapter = new DrawerRecyclerAdapter(this,getData());
-        bandContent.setAdapter(recyclerAdapter);
-
-        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
-        layoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
-
-        bandContent.setLayoutManager(layoutManager);
-
-        bandContent.addOnItemTouchListener(new RecyclerTouchListener(this,bandContent, new RecyclerTouchListener.ClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-                //TODO: meter a iniciar as atividades
-                //startActivity(new Intent(getActivity(),SubActivity.class));
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-            }
-        }));
 
     }
 
@@ -105,7 +86,6 @@ public class BandActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-
         if(id == R.id.home) {
             NavUtils.navigateUpFromSameTask(this);
         }
