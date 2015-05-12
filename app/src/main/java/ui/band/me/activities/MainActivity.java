@@ -1,30 +1,20 @@
 package ui.band.me.activities;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.dexafree.materialList.cards.BigImageButtonsCard;
 import com.dexafree.materialList.cards.OnButtonPressListener;
 import com.dexafree.materialList.controller.RecyclerItemClickListener;
 import com.dexafree.materialList.model.Card;
@@ -35,31 +25,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.security.Key;
 import java.util.ArrayList;
-import java.util.List;
 
 import ui.band.me.API.APICallerSingleton;
-import ui.band.me.adapters.BandListAdapter;
-import ui.band.me.adapters.DrawerRecyclerAdapter;
 import ui.band.me.extras.Band;
 import ui.band.me.extras.BandCard;
-import ui.band.me.extras.DrawerItemInfo;
 import ui.band.me.extras.Keys;
 import ui.band.me.fragments.NavigationDrawerFragment;
 import ui.band.me.R;
-import ui.band.me.listeners.RecyclerTouchListener;
 
 public class MainActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
-    private Button nextButton;
-
-    private RecyclerView recyclerView;
-    private BandListAdapter recyclerAdapter;
 
     private APICallerSingleton mAPIcaller;
-    private ImageLoader mImageLoader;
     private RequestQueue mRequestQueue;
 
     private ArrayList<Band> mBandList = new ArrayList<>();
@@ -88,6 +67,18 @@ public class MainActivity extends AppCompatActivity {
 
         sendBandRequest("Muse");
         mListView = (MaterialListView) findViewById(R.id.material_bandlistview);
+        mListView.addOnItemTouchListener(new RecyclerItemClickListener.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(CardItemView cardItemView, int pos) {
+                Log.d("Card View", "Clicked at position " + pos);
+            }
+
+            @Override
+            public void onItemLongClick(CardItemView cardItemView, int pos) {
+
+            }
+        });
 
     }
 
@@ -105,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
             card.setOnLeftButtonPressedListener(new OnButtonPressListener() {
                 @Override
                 public void onButtonPressedListener(View view, Card card) {
+                    Log.d("Card", "leftButton");
                     Toast.makeText(getApplicationContext(),
                             "You have pressed the left button",
                             Toast.LENGTH_SHORT

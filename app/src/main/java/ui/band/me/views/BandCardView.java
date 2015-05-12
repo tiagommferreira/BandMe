@@ -23,8 +23,6 @@ public class BandCardView extends CardItemView<BandCard> {
     TextView mTitle;
     TextView mDescription;
     ImageView mBandPic;
-    TextView mLeftButton;
-    TextView mRightButton;
 
     // Default constructors
     public BandCardView(Context context) {
@@ -41,8 +39,6 @@ public class BandCardView extends CardItemView<BandCard> {
 
     @Override
     public void build(BandCard card) {
-        //super.build(card);
-
         setTitle(card.getTitle());
         setDescription(card.getDescription());
 
