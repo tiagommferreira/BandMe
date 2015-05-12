@@ -1,11 +1,13 @@
 package ui.band.me.extras;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
-/**
- * Created by Tiago on 05/05/2015.
- */
-public class Band {
+
+public class Band implements Serializable {
     private String id;
     private String name;
     private ArrayList<String> genres;
@@ -81,4 +83,7 @@ public class Band {
     public void setImageLink(String imageLink) {
         this.imageLink = imageLink;
     }
+
+
+
 }

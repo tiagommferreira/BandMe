@@ -1,13 +1,20 @@
 package ui.band.me.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.text.Layout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -16,6 +23,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,19 +33,19 @@ import java.util.ArrayList;
 
 import ui.band.me.API.APICallerSingleton;
 import ui.band.me.R;
+import ui.band.me.adapters.DrawerRecyclerAdapter;
+import ui.band.me.extras.Band;
 import ui.band.me.extras.Keys;
+import ui.band.me.listeners.RecyclerTouchListener;
 
 /**
  * Created by Tiago on 05/05/2015.
  */
 public class BandActivity extends AppCompatActivity {
 
-    private APICallerSingleton mAPIcaller;
-    private ImageLoader mImageLoader;
-    private RequestQueue mRequestQueue;
-    private TextView mBandName;
-    private TextView mBandGenres;
-    private TextView mBandPopularity;
+    private ImageView bandPicture;
+    private RecyclerView bandContent;
+    private DrawerRecyclerAdapter recyclerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,61 +58,34 @@ public class BandActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mBandName = (TextView) findViewById(R.id.bandName);
-        mBandGenres = (TextView) findViewById(R.id.bandGenres);
-        mBandPopularity = (TextView) findViewById(R.id.bandPopularity);
+        Intent intent = getIntent();
+        Band band = (Band) intent.getSerializableExtra("band");
 
-        String bandId = "12Chz98pHFMPJEknJQMWvI";
+        getSupportActionBar().setTitle(band.getName());
 
-        mAPIcaller = APICallerSingleton.getsInstance();
-        mRequestQueue = mAPIcaller.getRequestQueue();
+        bandPicture = (ImageView) findViewById(R.id.bandPic);
+        Picasso.with(this).load(band.getImageLink()).into(bandPicture);
 
-        sendBandRequest(bandId);
-    }
+        this.bandContent = (RecyclerView) findViewById(R.id.drawer_list);
+        //this.recyclerAdapter = new DrawerRecyclerAdapter(this,getData());
+        bandContent.setAdapter(recyclerAdapter);
 
-    private void sendBandRequest(String bandId) {
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,getRequestURL(bandId),new Response.Listener<JSONObject>() {
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
+        layoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
+
+        bandContent.setLayoutManager(layoutManager);
+
+        bandContent.addOnItemTouchListener(new RecyclerTouchListener(this,bandContent, new RecyclerTouchListener.ClickListener() {
             @Override
-            public void onResponse(JSONObject response) {
-                parseBandJSON(response);
+            public void onClick(View view, int position) {
+                //TODO: meter a iniciar as atividades
+                //startActivity(new Intent(getActivity(),SubActivity.class));
             }
-        }, new Response.ErrorListener() {
+
             @Override
-            public void onErrorResponse(VolleyError error) {
-
+            public void onLongClick(View view, int position) {
             }
-        });
-
-        mRequestQueue.add(request);
-    }
-
-    private void parseBandJSON(JSONObject response) {
-        if(response == null || response.length()==0) {
-            return;
-        }
-
-        try {
-            mBandName.setText(response.getString(Keys.BandKeys.KEY_NAME));
-            mBandPopularity.setText("Popularity: " + String.valueOf(response.getInt(Keys.BandKeys.KEY_POPULARITY)));
-
-            JSONArray genres = response.getJSONArray(Keys.BandKeys.KEY_GENRES);
-            ArrayList<String> genresList = new ArrayList<>();
-            if(genres != null) {
-                for (int i=0;i<genres.length();i++){
-                    genresList.add(genres.get(i).toString());
-                }
-            }
-
-            if(genresList.size() == 0) {/**/
-                mBandGenres.setText("Genres: No defined genres");
-            }
-            else {
-                mBandGenres.setText("Genres: " + genresList);
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        }));
 
     }
 
@@ -124,9 +105,6 @@ public class BandActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
 
         if(id == R.id.home) {
             NavUtils.navigateUpFromSameTask(this);
@@ -135,7 +113,4 @@ public class BandActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public String getRequestURL(String id) {
-        return APICallerSingleton.URL_SPOTIFY_ARTISTS + id;
-    }
 }

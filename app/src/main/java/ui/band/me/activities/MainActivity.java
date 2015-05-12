@@ -3,6 +3,7 @@ package ui.band.me.activities;
 import android.app.Fragment;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -90,7 +91,6 @@ public class MainActivity extends AppCompatActivity {
 
         mAPIcaller = APICallerSingleton.getsInstance();
         mRequestQueue = mAPIcaller.getRequestQueue();
-
         setUpSearch();
 
         mListView = (MaterialListView) findViewById(R.id.material_bandlistview);
@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onItemClick(CardItemView cardItemView, int pos) {
-                Log.d("Card View", "Clicked at position " + pos);
+                startBandActivity(mBandList.get(pos));
             }
 
             @Override
@@ -106,6 +106,14 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+    }
+
+    private void startBandActivity(Band band) {
+        Intent i = new Intent(this,BandActivity.class);
+        i.putExtra("band", band);
+
+        startActivity(i);
 
     }
 
@@ -201,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
 
             }
-        });/**/
+        });
 
         mRequestQueue.add(request);
     }
@@ -272,9 +280,7 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+
         return super.onOptionsItemSelected(item);
     }
 }

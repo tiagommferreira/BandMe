@@ -46,6 +46,7 @@ public class DrawerRecyclerAdapter extends RecyclerView.Adapter<DrawerRecyclerAd
         return data.size();
     }
 
+
     class DrawerViewHolder extends RecyclerView.ViewHolder {
 
         TextView title;
