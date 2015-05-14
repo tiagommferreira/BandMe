@@ -3,11 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-    <include
-        android:id="@+id/app_bar"
-        layout="@layout/app_bar_band" />
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,77 +13,138 @@
             android:layout_height="wrap_content">
 
             <ImageView
+                android:id="@+id/bandPic"
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
-                android:adjustViewBounds="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
-                android:scaleType="centerCrop"
-                android:id="@+id/bandPic"/>
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop" />
 
             <RelativeLayout
-                android:layout_below="@+id/bandPic"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding = "16dp">
+                android:layout_below="@+id/bandPic"
+                android:padding="16dp">
 
                 <RelativeLayout
-                    android:id="@+id/tile1"
+                    android:id="@+id/discographyTile"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:elevation="2dp"
+                    android:background="@drawable/custom_bg"
                     android:clickable="true"
-                    android:background="@drawable/custom_bg">
+                    android:elevation="2dp">
+
+                    <ImageView
+                        android:id="@+id/discographyImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
 
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/tile2"
-                    android:layout_below="@id/tile1"
+                    android:id="@+id/spotifyTile"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
+                    android:layout_below="@id/discographyTile"
                     android:layout_marginTop="20dp"
-                    android:elevation="2dp"
+                    android:background="@drawable/custom_bg"
                     android:clickable="true"
-                    android:background="@drawable/custom_bg">
+                    android:elevation="2dp">
+
+                    <ImageView
+                        android:id="@+id/spotifyImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/spotify_image" />
 
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/tile3"
-                    android:layout_toRightOf="@id/tile1"
+                    android:id="@+id/tracksTile"
                     android:layout_width="220dp"
                     android:layout_height="220dp"
                     android:layout_marginLeft="20dp"
-                    android:elevation="2dp"
+                    android:layout_toRightOf="@id/discographyTile"
+                    android:background="@drawable/custom_bg"
                     android:clickable="true"
-                    android:background="@drawable/custom_bg">
+                    android:elevation="2dp">
+
+                    <ImageView
+                        android:id="@+id/tracksImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"/>
+
+                    <TextView
+                        android:id="@+id/track1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/track2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/track1"/>
+
+                    <TextView
+                        android:id="@+id/track3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/track2" />
+
+                    <TextView
+                        android:id="@+id/track4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/track3" />
+
+                    <TextView
+                        android:id="@+id/track5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/track4" />
 
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/tile4"
-                    android:layout_below="@id/tile2"
+                    android:id="@+id/recommendedTile"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
+                    android:layout_below="@id/spotifyTile"
                     android:layout_marginTop="20dp"
-                    android:elevation="2dp"
+                    android:background="@drawable/custom_bg"
                     android:clickable="true"
-                    android:background="@drawable/custom_bg">
+                    android:elevation="2dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/primaryColor">
+
+                    </RelativeLayout>
 
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/tile5"
-                    android:layout_below="@id/tile2"
-                    android:layout_toRightOf="@id/tile4"
-                    android:layout_width="100dp"
+                    android:id="@+id/bioTile"
+                    android:layout_width="220dp"
                     android:layout_height="100dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_below="@id/tracksTile"
                     android:layout_marginLeft="20dp"
-                    android:elevation="2dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_toRightOf="@id/recommendedTile"
+                    android:background="@drawable/custom_bg"
                     android:clickable="true"
-                    android:background="@drawable/custom_bg">
+                    android:elevation="2dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/primaryColor">
+
+                    </RelativeLayout>
 
                 </RelativeLayout>
 
@@ -98,6 +154,10 @@
 
     </ScrollView>
 
+
+    <include
+        android:id="@+id/app_bar"
+        layout="@layout/app_bar_band"/>
 
 
 </RelativeLayout>

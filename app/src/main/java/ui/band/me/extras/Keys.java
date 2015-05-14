@@ -17,4 +17,10 @@ public interface Keys {
         public static final String KEY_ARTISTS = "artists";
         public static final String KEY_ITEMS = "items";
     }
+    public interface TrackKeys {
+        public static final String KEY_IMAGES = "images";
+        public static final String KEY_NAME = "name";
+        public static final String KEY_TRACKS = "tracks";
+
+    }
 }
