@@ -116,7 +116,7 @@ public class BandActivity extends AppCompatActivity {
     private void sendTrackRequest() {
 
 
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,getRequestURL(bandId),new Response.Listener<JSONObject>() {
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, getRequestURL(bandId), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 topTracks = parseTracksJSON(response);
@@ -135,12 +135,20 @@ public class BandActivity extends AppCompatActivity {
 
     private void setTextViews() {
 
-        if(topTracks.size() == 5) {
+        if (topTracks.size() > 0) {
             track1.setText(topTracks.get(0).getName());
-            track2.setText(topTracks.get(1).getName());
-            track3.setText(topTracks.get(2).getName());
-            track4.setText(topTracks.get(3).getName());
-            track5.setText(topTracks.get(4).getName());
+            if (topTracks.size() > 1) {
+                track2.setText(topTracks.get(1).getName());
+                if (topTracks.size() > 2) {
+                    track3.setText(topTracks.get(2).getName());
+                    if (topTracks.size() > 3) {
+                        track4.setText(topTracks.get(3).getName());
+                        if (topTracks.size() > 4) {
+                            track5.setText(topTracks.get(4).getName());
+                        }
+                    }
+                }
+            }
 
             Picasso.with(this).load(topTracks.get(0).getAlbum_image_url()).into(tracksImage);
         }
@@ -151,11 +159,11 @@ public class BandActivity extends AppCompatActivity {
     private ArrayList<Track> parseTracksJSON(JSONObject response) {
         ArrayList<Track> listTracks = new ArrayList<>();
 
-        if(response != null && response.length()>0) {
+        if (response != null && response.length() > 0) {
             try {
                 JSONArray tracksArray = response.getJSONArray(Keys.TrackKeys.KEY_TRACKS);
 
-                for(int i = 0; i < tracksArray.length();i++) {
+                for (int i = 0; i < tracksArray.length(); i++) {
                     Track track = new Track();
                     JSONObject currentItem = tracksArray.getJSONObject(i);
 
@@ -194,7 +202,7 @@ public class BandActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if(id == R.id.home) {
+        if (id == R.id.home) {
             NavUtils.navigateUpFromSameTask(this);
         }
 
