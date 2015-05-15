@@ -2,6 +2,7 @@ package ui.band.me.fragments;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,18 +12,35 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+
+import com.android.volley.RequestQueue;
+import com.squareup.picasso.Picasso;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterApiClient;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
+import com.twitter.sdk.android.core.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.fabric.sdk.android.Fabric;
+import ui.band.me.API.APICallerSingleton;
 import ui.band.me.R;
 import ui.band.me.adapters.DrawerRecyclerAdapter;
 import ui.band.me.extras.DrawerItemInfo;
+import ui.band.me.extras.RoundedTransformation;
 import ui.band.me.listeners.RecyclerTouchListener;
 
 
@@ -30,6 +48,13 @@ import ui.band.me.listeners.RecyclerTouchListener;
  * A simple {@link Fragment} subclass.
  */
 public class NavigationDrawerFragment extends Fragment {
+
+    private static final String TWITTER_KEY = "5qruaMPBhd6T6XKrd6UfnRniG";
+    private static final String TWITTER_SECRET = "9gcTJhyDH0mSW7A2BBVAp7arDwsdN4UGbGutt05m1oybCiTxTQ";
+    protected TwitterLoginButton loginButton;
+    protected TwitterAuthConfig authConfig;
+    private APICallerSingleton mAPIcaller;
+    private RequestQueue mRequestQueue;
 
     public static final String PREF_FILE_NAME = "bandMePref";
     public static final String KEY_USER_LEARNED_DRAWER = "user_learned_drawer";
@@ -41,7 +66,6 @@ public class NavigationDrawerFragment extends Fragment {
     private boolean mFromSavedInstanceState;
 
     private View mContainerView;
-
 
     private RecyclerView recyclerView;
     private DrawerRecyclerAdapter recyclerAdapter;
@@ -58,6 +82,14 @@ public class NavigationDrawerFragment extends Fragment {
         if (savedInstanceState != null) {
             mFromSavedInstanceState = true;
         }
+
+        authConfig = new TwitterAuthConfig(TWITTER_KEY,
+                TWITTER_SECRET);
+        Fabric.with(this.getActivity(), new TwitterCore(authConfig));
+        mAPIcaller = APICallerSingleton.getsInstance();
+        mRequestQueue = mAPIcaller.getRequestQueue();
+
+
     }
 
     @Override
@@ -65,7 +97,7 @@ public class NavigationDrawerFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        View layout = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+        final View layout = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
 
         this.recyclerView = (RecyclerView) layout.findViewById(R.id.drawer_list);
         this.recyclerAdapter = new DrawerRecyclerAdapter(getActivity(),getData());
@@ -84,6 +116,35 @@ public class NavigationDrawerFragment extends Fragment {
             }
         }));
 
+
+        loginButton = (TwitterLoginButton) layout.findViewById(R.id.login_button);
+        loginButton.setCallback(new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                TwitterSession session = result.data;
+                Log.d("Twitter",session.getUserName());
+                TwitterApiClient twitterApi = TwitterCore.getInstance().getApiClient();
+                twitterApi.getAccountService().verifyCredentials(null,null,new Callback<User>() {
+                            @Override
+                            public void success(Result<User> userResult) {
+                                User user = userResult.data;
+                                showImage(layout,user.profileImageUrlHttps);
+                            }
+                            @Override
+                            public void failure(TwitterException e) {
+                                Log.d("Twitter", "failure");
+                            }
+                        }
+                );
+            }
+            @Override
+            public void failure(TwitterException exception) {
+                Log.d("Twitter","Result failure");
+                exception.printStackTrace();
+            }
+        });
+
+
         return layout;
 
     }
@@ -100,6 +161,15 @@ public class NavigationDrawerFragment extends Fragment {
             data.add(info);
         }
         return data;
+    }
+
+    private void showImage(View layout, String url) {
+        Log.d("Twitter",url);
+        ImageView profile_picture = (ImageView) layout.findViewById(R.id.profile_image);
+        Picasso.with(this.getActivity()).load(url)
+                .transform(new RoundedTransformation(100, 0))
+                .fit()
+                .into(profile_picture);
     }
 
 
@@ -154,5 +224,16 @@ public class NavigationDrawerFragment extends Fragment {
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_FILE_NAME,context.MODE_PRIVATE);
         return sharedPreferences.getString(preferenceName,defaultValue);
     }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // Pass the activity result to the login button.
+        Log.d("Fragment","Activity result");
+        Log.d("Data",data.toString());
+        loginButton.onActivityResult(requestCode, resultCode,data);
+    }
+
 
 }

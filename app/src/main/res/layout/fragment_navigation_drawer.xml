@@ -24,8 +24,34 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-
     </android.support.v7.widget.RecyclerView>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="200dp"
+        android:paddingLeft="5dp">
+
+
+        <com.twitter.sdk.android.core.identity.TwitterLoginButton
+            android:id="@+id/login_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+        </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/profile_image"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:adjustViewBounds="true"
+        android:padding="10dp"
+        android:scaleType="centerCrop"
+        android:src="@mipmap/default_user_profile"/>
+
 
 
 </RelativeLayout>

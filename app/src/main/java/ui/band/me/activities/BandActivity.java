@@ -135,13 +135,17 @@ public class BandActivity extends AppCompatActivity {
 
     private void setTextViews() {
 
-        track1.setText(topTracks.get(0).getName());
-        track2.setText(topTracks.get(1).getName());
-        track3.setText(topTracks.get(2).getName());
-        track4.setText(topTracks.get(3).getName());
-        track5.setText(topTracks.get(4).getName());
+        if(topTracks.size() == 5) {
+            track1.setText(topTracks.get(0).getName());
+            track2.setText(topTracks.get(1).getName());
+            track3.setText(topTracks.get(2).getName());
+            track4.setText(topTracks.get(3).getName());
+            track5.setText(topTracks.get(4).getName());
 
-        Picasso.with(this).load(topTracks.get(0).getAlbum_image_url()).into(tracksImage);
+            Picasso.with(this).load(topTracks.get(0).getAlbum_image_url()).into(tracksImage);
+        }
+
+
     }
 
     private ArrayList<Track> parseTracksJSON(JSONObject response) {

@@ -71,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText toolbarSearchView;
     private ImageView searchClearButton;
 
+    private NavigationDrawerFragment drawerFragment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        NavigationDrawerFragment drawerFragment;
         drawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
         drawerFragment.setUp(R.id.fragment_navigation_drawer,(DrawerLayout) findViewById(R.id.drawer_layout), toolbar);
 
@@ -282,5 +283,20 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+
+        Log.d("Activity","Activity result");
+        Log.d("Data",data.toString());
+        // Pass the activity result to the fragment, which will
+        // then pass the result to the login button.
+        if (drawerFragment != null) {
+            Log.d("Fragment","NOT NULL");
+            drawerFragment.onActivityResult(requestCode, resultCode, data);
+        }
     }
 }
