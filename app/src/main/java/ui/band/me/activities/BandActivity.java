@@ -3,26 +3,14 @@ package ui.band.me.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
-import android.text.Layout;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -31,17 +19,13 @@ import org.json.JSONObject;
 
 import java.text.Normalizer;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
-import ui.band.me.API.APICallerSingleton;
+import ui.band.me.API.APIListener;
+import ui.band.me.API.APIThread;
 import ui.band.me.R;
-import ui.band.me.adapters.DrawerRecyclerAdapter;
 import ui.band.me.extras.Band;
-import ui.band.me.extras.DrawerItemInfo;
 import ui.band.me.extras.Keys;
 import ui.band.me.extras.Track;
-import ui.band.me.listeners.RecyclerTouchListener;
 
 /**
  * Created by Tiago on 05/05/2015.
@@ -55,8 +39,6 @@ public class BandActivity extends AppCompatActivity {
     private View recommendedTile;
     private View bioTile;
 
-    private APICallerSingleton mAPIcaller;
-    private RequestQueue mRequestQueue;
 
     private ArrayList<Track> topTracks = new ArrayList<>();
     private TextView track1;
@@ -84,8 +66,6 @@ public class BandActivity extends AppCompatActivity {
 
         getSupportActionBar().setTitle(band.getName());
 
-        mAPIcaller = APICallerSingleton.getsInstance();
-        mRequestQueue = mAPIcaller.getRequestQueue();
 
         bandPicture = (ImageView) findViewById(R.id.bandPic);
         Picasso.with(this).load(band.getImageLink()).into(bandPicture);
@@ -114,27 +94,16 @@ public class BandActivity extends AppCompatActivity {
     }
 
     private void sendTrackRequest() {
-
-
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, getRequestURL(bandId), new Response.Listener<JSONObject>() {
+        new APIThread(getRequestURL(bandId),new APIListener() {
             @Override
-            public void onResponse(JSONObject response) {
+            public void requestCompleted(JSONObject response) {
                 topTracks = parseTracksJSON(response);
                 setTextViews();
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
-
-        mRequestQueue.add(request);
-
+        }).execute();
     }
 
     private void setTextViews() {
-
         if (topTracks.size() > 0) {
             track1.setText(topTracks.get(0).getName());
             if (topTracks.size() > 1) {
@@ -152,7 +121,6 @@ public class BandActivity extends AppCompatActivity {
 
             Picasso.with(this).load(topTracks.get(0).getAlbum_image_url()).into(tracksImage);
         }
-
 
     }
 
@@ -183,7 +151,7 @@ public class BandActivity extends AppCompatActivity {
     }
 
     String getRequestURL(String id) {
-        return Normalizer.normalize(APICallerSingleton.URL_SPOTIFY_ARTISTS + id + "/top-tracks?country=US", Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
+        return Normalizer.normalize(Keys.APIUrls.URL_SPOTIFY_ARTISTS + id + "/top-tracks?country=US", Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
     }
 
 

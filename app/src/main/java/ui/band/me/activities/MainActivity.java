@@ -1,42 +1,21 @@
 package ui.band.me.activities;
 
-import android.app.Fragment;
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.content.res.TypedArray;
-import android.graphics.Color;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.dexafree.materialList.cards.OnButtonPressListener;
 import com.dexafree.materialList.controller.RecyclerItemClickListener;
-import com.dexafree.materialList.model.Card;
 import com.dexafree.materialList.model.CardItemView;
 import com.dexafree.materialList.view.MaterialListView;
 
@@ -48,26 +27,22 @@ import java.lang.reflect.Field;
 import java.text.Normalizer;
 import java.util.ArrayList;
 
-import ui.band.me.API.APICallerSingleton;
+import ui.band.me.API.APIListener;
+import ui.band.me.API.APIThread;
 import ui.band.me.extras.Band;
 import ui.band.me.extras.BandCard;
 import ui.band.me.extras.Keys;
 import ui.band.me.fragments.NavigationDrawerFragment;
 import ui.band.me.R;
 
-import static android.graphics.Color.*;
-
 public class MainActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
 
-    private APICallerSingleton mAPIcaller;
-    private RequestQueue mRequestQueue;
 
     private ArrayList<Band> mBandList = new ArrayList<>();
     private MaterialListView mListView;
 
-    private View searchContainer;
     private EditText toolbarSearchView;
     private ImageView searchClearButton;
 
@@ -90,8 +65,6 @@ public class MainActivity extends AppCompatActivity {
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerLayout.setStatusBarBackground(R.color.primaryColorDark);
 
-        mAPIcaller = APICallerSingleton.getsInstance();
-        mRequestQueue = mAPIcaller.getRequestQueue();
         setUpSearch();
 
         mListView = (MaterialListView) findViewById(R.id.material_bandlistview);
@@ -119,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpSearch() {
-        searchContainer = findViewById(R.id.search_container);
         toolbarSearchView = (EditText) findViewById(R.id.search_view);
         searchClearButton = (ImageView) findViewById(R.id.search_clear);
 
@@ -171,23 +143,6 @@ public class MainActivity extends AppCompatActivity {
             BandCard card = new BandCard(this);
             card.setTitle(band.getName());
 
-            /*
-            String genres = "";
-
-            if(band.getGenres().size() == 0) {
-                genres = "Undefined genre";
-            }
-            else {
-                ArrayList<String> bandGenres = band.getGenres();
-
-                genres += bandGenres.get(0);
-
-                for (int i = 1; i < bandGenres.size(); i++) {
-                    genres += ", " + bandGenres.get(i);
-                }
-            }
-            */
-
             card.setDescription(band.getFollowers() + " people like this");
 
             card.setDrawable(band.getImageLink());
@@ -198,21 +153,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendBandRequest(String bandName) {
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,getRequestURL(bandName),new Response.Listener<JSONObject>() {
+
+        new APIThread(getRequestURL(bandName),new APIListener() {
             @Override
-            public void onResponse(JSONObject response) {
+            public void requestCompleted(JSONObject response) {
                 mBandList = parseBandJSON(response);
+                for(Band band: mBandList) {
+                    Log.d("Band name", band.getName());
+                }
                 removePrevCards();
                 addCards();
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
-
-        mRequestQueue.add(request);
+        }).execute();
     }
 
     private void removePrevCards() {
@@ -261,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public String getRequestURL(String name) {
-        return Normalizer.normalize(APICallerSingleton.URL_SPOTIFY_SEARCH + "?q=" + name.replaceAll(" ", "+") + "&type=artist", Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
+        return Normalizer.normalize(Keys.APIUrls.URL_SPOTIFY_SEARCH + "?q=" + name.replaceAll(" ", "+") + "&type=artist", Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
     }
 
     @Override
@@ -289,13 +241,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-
-        Log.d("Activity","Activity result");
-        Log.d("Data",data.toString());
         // Pass the activity result to the fragment, which will
         // then pass the result to the login button.
         if (drawerFragment != null) {
-            Log.d("Fragment","NOT NULL");
             drawerFragment.onActivityResult(requestCode, resultCode, data);
         }
     }

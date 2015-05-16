@@ -13,14 +13,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.android.volley.RequestQueue;
 import com.squareup.picasso.Picasso;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
@@ -36,7 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.fabric.sdk.android.Fabric;
-import ui.band.me.API.APICallerSingleton;
 import ui.band.me.R;
 import ui.band.me.adapters.DrawerRecyclerAdapter;
 import ui.band.me.extras.DrawerItemInfo;
@@ -53,8 +49,6 @@ public class NavigationDrawerFragment extends Fragment {
     private static final String TWITTER_SECRET = "9gcTJhyDH0mSW7A2BBVAp7arDwsdN4UGbGutt05m1oybCiTxTQ";
     protected TwitterLoginButton loginButton;
     protected TwitterAuthConfig authConfig;
-    private APICallerSingleton mAPIcaller;
-    private RequestQueue mRequestQueue;
 
     public static final String PREF_FILE_NAME = "bandMePref";
     public static final String KEY_USER_LEARNED_DRAWER = "user_learned_drawer";
@@ -86,8 +80,6 @@ public class NavigationDrawerFragment extends Fragment {
         authConfig = new TwitterAuthConfig(TWITTER_KEY,
                 TWITTER_SECRET);
         Fabric.with(this.getActivity(), new TwitterCore(authConfig));
-        mAPIcaller = APICallerSingleton.getsInstance();
-        mRequestQueue = mAPIcaller.getRequestQueue();
 
 
     }

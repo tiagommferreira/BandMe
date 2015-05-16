@@ -23,4 +23,8 @@ public interface Keys {
         public static final String KEY_TRACKS = "tracks";
 
     }
+    public interface APIUrls {
+        public static final String URL_SPOTIFY_SEARCH =  "https://api.spotify.com/v1/search";
+        public static final String URL_SPOTIFY_ARTISTS =  "https://api.spotify.com/v1/artists/";
+    }
 }
