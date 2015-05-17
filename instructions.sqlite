@@ -1,0 +1,91 @@
+
+Create table if not exists User
+(
+id INTEGER PRIMARY KEY   AUTOINCREMENT,
+username varchar UNIQUE,
+avatar varchar,
+timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+Create table if not exists Band
+(
+id INTEGER PRIMARY KEY   AUTOINCREMENT,
+name varchar,
+followers integer,
+popularity integer,
+spotify_uri varchar,
+image_url varchar,
+biography text,
+timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+create table if not exists Genre
+(
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+name varchar UNIQUE,
+timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+create table if not exists search
+(
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+information varchar,
+timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+
+create table if not exists share 
+(
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+FOREIGN KEY(band_id) REFERENCES Band(id),
+FOREIGN KEY(user_id) REFERENCES User(id),
+timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+/** ESTAS TABELAS ESTAO A DAR ERRO **/
+create table if not exists Band_Genre
+(
+id INTEGER  AUTOINCREMENT,
+FOREIGN KEY(band_id) REFERENCES Band(id),
+FOREIGN KEY(genre_id) REFERENCES Genre(id),
+PRIMARY KEY(band_id,genre_id),
+timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+create table if not exists Favourite
+(
+id INTEGER  AUTOINCREMENT,
+band_id INTEGER,
+user_id INTEGER,
+FOREIGN KEY(band_id) REFERENCES Band(id),
+FOREIGN KEY(user_id) REFERENCES User(id),
+PRIMARY KEY(user_id,band_id),
+timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
