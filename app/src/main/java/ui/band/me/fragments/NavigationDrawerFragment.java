@@ -113,6 +113,11 @@ public class NavigationDrawerFragment extends Fragment {
         loginButton.setCallback(new Callback<TwitterSession>() {
             @Override
             public void success(Result<TwitterSession> result) {
+                //disables button
+                loginButton.setEnabled(false);
+                loginButton.setVisibility(View.INVISIBLE);
+
+                //handles twitter information
                 TwitterSession session = result.data;
                 Log.d("Twitter",session.getUserName());
                 TwitterApiClient twitterApi = TwitterCore.getInstance().getApiClient();
