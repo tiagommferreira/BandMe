@@ -9,6 +9,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -27,9 +29,6 @@ import ui.band.me.extras.Band;
 import ui.band.me.extras.Keys;
 import ui.band.me.extras.Track;
 
-/**
- * Created by Tiago on 05/05/2015.
- */
 public class BandActivity extends AppCompatActivity {
 
     private ImageView bandPicture;
@@ -41,11 +40,6 @@ public class BandActivity extends AppCompatActivity {
 
 
     private ArrayList<Track> topTracks = new ArrayList<>();
-    private TextView track1;
-    private TextView track2;
-    private TextView track3;
-    private TextView track4;
-    private TextView track5;
     private ImageView tracksImage;
 
     private String bandId;
@@ -83,18 +77,11 @@ public class BandActivity extends AppCompatActivity {
     private void setupTracksTile() {
 
         tracksImage = (ImageView) tracksTile.findViewById(R.id.tracksImage);
-        track1 = (TextView) tracksTile.findViewById(R.id.track1);
-        track2 = (TextView) tracksTile.findViewById(R.id.track2);
-        track3 = (TextView) tracksTile.findViewById(R.id.track3);
-        track4 = (TextView) tracksTile.findViewById(R.id.track4);
-        track5 = (TextView) tracksTile.findViewById(R.id.track5);
-
         sendTrackRequest();
-
     }
 
     private void sendTrackRequest() {
-        new APIThread(getRequestURL(bandId),new APIListener() {
+        new APIThread(getRequestURL(bandId), new APIListener() {
             @Override
             public void requestCompleted(JSONObject response) {
                 topTracks = parseTracksJSON(response);
@@ -104,23 +91,22 @@ public class BandActivity extends AppCompatActivity {
     }
 
     private void setTextViews() {
-        if (topTracks.size() > 0) {
-            track1.setText(topTracks.get(0).getName());
-            if (topTracks.size() > 1) {
-                track2.setText(topTracks.get(1).getName());
-                if (topTracks.size() > 2) {
-                    track3.setText(topTracks.get(2).getName());
-                    if (topTracks.size() > 3) {
-                        track4.setText(topTracks.get(3).getName());
-                        if (topTracks.size() > 4) {
-                            track5.setText(topTracks.get(4).getName());
-                        }
-                    }
-                }
-            }
+        if(topTracks.size()!=0) {
+            RelativeLayout topTracksLayout = (RelativeLayout) findViewById(R.id.tracksTile);
+            for(int i=0;i<topTracks.size();i++) {
+                RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(
+                        RadioGroup.LayoutParams.WRAP_CONTENT, RadioGroup.LayoutParams.WRAP_CONTENT);
+                relativeParams.setMargins(0,i*30,0,0);
 
+                TextView topTrackTextView = new TextView(this);
+                topTrackTextView.setText(topTracks.get(i).getName());
+                topTrackTextView.setLayoutParams(relativeParams);
+
+                topTracksLayout.addView(topTrackTextView);
+            }
             Picasso.with(this).load(topTracks.get(0).getAlbum_image_url()).into(tracksImage);
         }
+
 
     }
 
