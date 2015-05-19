@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -164,6 +165,9 @@ public class BandActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.home) {
             NavUtils.navigateUpFromSameTask(this);
+        }
+        else if(id == R.id.action_share) {
+
         }
 
         return super.onOptionsItemSelected(item);
