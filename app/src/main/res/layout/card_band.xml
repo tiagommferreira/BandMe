@@ -33,14 +33,12 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="#fff"
-                android:textSize="@dimen/bigger_title_size"
-                android:background="#33000000"
                 android:gravity="bottom|left"
                 android:paddingLeft="@dimen/big_padding"
                 android:paddingBottom="@dimen/small_padding"
                 android:layout_alignBottom="@+id/imageView"
                 android:id="@+id/titleTextView"
+                style="@style/textInImage"
                 tools:text="Title"/>
 
             <TextView

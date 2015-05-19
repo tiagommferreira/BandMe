@@ -8,7 +8,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -92,15 +94,19 @@ public class BandActivity extends AppCompatActivity {
 
     private void setTextViews() {
         if(topTracks.size()!=0) {
-            RelativeLayout topTracksLayout = (RelativeLayout) findViewById(R.id.tracksTile);
+            RelativeLayout wrapperLayout = (RelativeLayout) findViewById(R.id.tracksTile);
+            LinearLayout topTracksLayout = (LinearLayout) wrapperLayout.findViewById(R.id.tracksLayout);
             for(int i=0;i<topTracks.size();i++) {
-                RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(
-                        RadioGroup.LayoutParams.WRAP_CONTENT, RadioGroup.LayoutParams.WRAP_CONTENT);
-                relativeParams.setMargins(0,i*30,0,0);
+
+                LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
                 TextView topTrackTextView = new TextView(this);
                 topTrackTextView.setText(topTracks.get(i).getName());
-                topTrackTextView.setLayoutParams(relativeParams);
+                topTrackTextView.setBackgroundColor(getResources().getColor(R.color.textInImageBG));
+                topTrackTextView.setTextColor(getResources().getColor(R.color.textInImageTC));
+                topTrackTextView.setTextSize(getResources().getDimension(R.dimen.topTrackTS));
+                topTrackTextView.setLayoutParams(linearParams);
 
                 topTracksLayout.addView(topTrackTextView);
             }

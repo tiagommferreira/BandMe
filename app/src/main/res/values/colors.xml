@@ -4,4 +4,7 @@
     <color name="primaryColorDark">#303F9F</color>
     <color name="accentColor">#F44336</color>
     <color name="colorHighlight">#B6B6B6</color>
+
+    <color name="textInImageBG">#33000000</color>
+    <color name="textInImageTC">#fff</color>
 </resources>

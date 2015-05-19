@@ -15,4 +15,11 @@
         <item name="windowActionBarOverlay">true</item>
     </style>
 
+
+    <style name="textInImage">
+        <item name="android:textColor">@color/textInImageTC</item>
+        <item name="android:textSize">@dimen/bigger_title_size</item>
+        <item name="android:background">@color/textInImageBG</item>
+    </style>
+
 </resources>

@@ -75,9 +75,15 @@
                         android:id="@+id/tracksImage"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:scaleType="centerCrop"/>
+                        android:scaleType="centerCrop" />
 
+                    <LinearLayout
+                        android:id="@+id/tracksLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
 
+                    </LinearLayout>
 
                 </RelativeLayout>
 
@@ -130,7 +136,7 @@
 
     <include
         android:id="@+id/app_bar"
-        layout="@layout/app_bar_band"/>
+        layout="@layout/app_bar_band" />
 
 
 </RelativeLayout>
