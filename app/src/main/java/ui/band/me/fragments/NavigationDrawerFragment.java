@@ -36,6 +36,7 @@ import io.fabric.sdk.android.Fabric;
 import ui.band.me.R;
 import ui.band.me.adapters.DrawerRecyclerAdapter;
 import ui.band.me.extras.DrawerItemInfo;
+import ui.band.me.extras.Keys;
 import ui.band.me.extras.RoundedTransformation;
 import ui.band.me.listeners.RecyclerTouchListener;
 
@@ -45,8 +46,6 @@ import ui.band.me.listeners.RecyclerTouchListener;
  */
 public class NavigationDrawerFragment extends Fragment {
 
-    private static final String TWITTER_KEY = "5qruaMPBhd6T6XKrd6UfnRniG";
-    private static final String TWITTER_SECRET = "9gcTJhyDH0mSW7A2BBVAp7arDwsdN4UGbGutt05m1oybCiTxTQ";
     protected TwitterLoginButton loginButton;
     protected TwitterAuthConfig authConfig;
 
@@ -77,8 +76,7 @@ public class NavigationDrawerFragment extends Fragment {
             mFromSavedInstanceState = true;
         }
 
-        authConfig = new TwitterAuthConfig(TWITTER_KEY,
-                TWITTER_SECRET);
+        authConfig = new TwitterAuthConfig(Keys.API.TWITTER_KEY, Keys.API.TWITTER_SECRET);
         Fabric.with(this.getActivity(), new TwitterCore(authConfig));
 
 
@@ -119,7 +117,7 @@ public class NavigationDrawerFragment extends Fragment {
 
                 //handles twitter information
                 TwitterSession session = result.data;
-                Log.d("Twitter",session.getUserName());
+                Log.d("Twitter", session.getUserName());
                 TwitterApiClient twitterApi = TwitterCore.getInstance().getApiClient();
                 twitterApi.getAccountService().verifyCredentials(null,null,new Callback<User>() {
                             @Override

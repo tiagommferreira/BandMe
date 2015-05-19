@@ -213,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public String getRequestURL(String name) {
-        return Normalizer.normalize(Keys.APIUrls.URL_SPOTIFY_SEARCH + "?q=" + name.replaceAll(" ", "+") + "&type=artist", Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
+        return Normalizer.normalize(Keys.API.URL_SPOTIFY_SEARCH + "?q=" + name.replaceAll(" ", "+") + "&type=artist", Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
     }
 
     @Override

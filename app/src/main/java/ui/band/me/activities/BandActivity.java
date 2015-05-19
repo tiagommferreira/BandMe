@@ -5,16 +5,15 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -27,10 +26,12 @@ import java.util.ArrayList;
 
 import ui.band.me.API.APIListener;
 import ui.band.me.API.APIThread;
+import ui.band.me.API.TwitterAPI;
 import ui.band.me.R;
 import ui.band.me.extras.Band;
 import ui.band.me.extras.Keys;
 import ui.band.me.extras.Track;
+import ui.band.me.fragments.ShareDialogFragment;
 
 public class BandActivity extends AppCompatActivity {
 
@@ -40,6 +41,8 @@ public class BandActivity extends AppCompatActivity {
     private View tracksTile;
     private View recommendedTile;
     private View bioTile;
+
+    private String bandName;
 
 
     private ArrayList<Track> topTracks = new ArrayList<>();
@@ -60,6 +63,7 @@ public class BandActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         Band band = (Band) intent.getSerializableExtra("band");
+        bandName = band.getName();
 
         getSupportActionBar().setTitle(band.getName());
 
@@ -144,7 +148,7 @@ public class BandActivity extends AppCompatActivity {
     }
 
     String getRequestURL(String id) {
-        return Normalizer.normalize(Keys.APIUrls.URL_SPOTIFY_ARTISTS + id + "/top-tracks?country=US", Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
+        return Normalizer.normalize(Keys.API.URL_SPOTIFY_ARTISTS + id + "/top-tracks?country=US", Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
     }
 
 
@@ -167,6 +171,9 @@ public class BandActivity extends AppCompatActivity {
             NavUtils.navigateUpFromSameTask(this);
         }
         else if(id == R.id.action_share) {
+            //creates and shows dialog to user
+            ShareDialogFragment.newInstance(bandName)
+                    .show(this.getFragmentManager(), "Share");
 
         }
 
