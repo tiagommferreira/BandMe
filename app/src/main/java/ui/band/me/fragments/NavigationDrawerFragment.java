@@ -117,7 +117,10 @@ public class NavigationDrawerFragment extends Fragment {
 
                 //handles twitter information
                 TwitterSession session = result.data;
-                Log.d("Twitter", session.getUserName());
+                Keys.API.TWITTER_ACCESS_TOKEN = session.getAuthToken().token;
+                Keys.API.TWITTER_ACCESS_TOKEN_SECRET = session.getAuthToken().secret;
+                Log.d("Twitter", session.getAuthToken().token);
+                Log.d("Twitter", session.getAuthToken().secret);
                 TwitterApiClient twitterApi = TwitterCore.getInstance().getApiClient();
                 twitterApi.getAccountService().verifyCredentials(null,null,new Callback<User>() {
                             @Override

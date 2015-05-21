@@ -23,12 +23,12 @@ public interface Keys {
         public static final String KEY_TRACKS = "tracks";
 
     }
-    public interface API {
+    public class API {
         public static final String URL_SPOTIFY_SEARCH =  "https://api.spotify.com/v1/search";
         public static final String URL_SPOTIFY_ARTISTS =  "https://api.spotify.com/v1/artists/";
         public static final String TWITTER_KEY = "ehKpzDxn7TciKfMmSfjnNlAL9";
         public static final String TWITTER_SECRET = "j1ZdbXDZDzr4mA4mxzWO4jIYhuDB11FwXHT9TNPm5PJuIYLJsZ";
-        public static final String TWITTER_ACCESS_TOKEN = "2740390130-GNzgUDHUYBrE87KmBF2FPwuuEJ7WZPO7qVU0UMK";
-        public static final String TWITTER_ACCESS_TOKEN_SECRET = "A39wtdFVdtWUhQt7aYHdFfJq8JEep5Ke0IORaC94ahRAc";
+        public static String TWITTER_ACCESS_TOKEN = null;
+        public static String TWITTER_ACCESS_TOKEN_SECRET = null;
     }
 }

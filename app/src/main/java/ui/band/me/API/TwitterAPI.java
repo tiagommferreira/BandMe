@@ -6,18 +6,12 @@ import android.util.Log;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -43,10 +37,12 @@ public class TwitterAPI extends AsyncTask<String,String,String> {
     private static final String oauth_timestamp = "oauth_timestamp";
     private static final String oauth_token = "oauth_token";
     private static final String oauth_version = "oauth_version";
+    private static final String oauth_callback = "oauth_callback";
     private static final String status = "status";
 
     //message to send
     private String message;
+    private Object OAuthTokens;
 
     public TwitterAPI(String message) {
         this.message = message;
@@ -77,8 +73,7 @@ public class TwitterAPI extends AsyncTask<String,String,String> {
             }
 
             Log.d("TWITTER", theStringBuilder.toString());
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             Log.e("Twitter", e.getMessage());
         }
 
@@ -155,6 +150,5 @@ public class TwitterAPI extends AsyncTask<String,String,String> {
     private static String base64Encode(byte[] array) {
         return Base64.encodeToString(array, Base64.NO_WRAP);
     }
-
 
 }

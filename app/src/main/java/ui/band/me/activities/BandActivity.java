@@ -1,11 +1,12 @@
 package ui.band.me.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,7 +27,6 @@ import java.util.ArrayList;
 
 import ui.band.me.API.APIListener;
 import ui.band.me.API.APIThread;
-import ui.band.me.API.TwitterAPI;
 import ui.band.me.R;
 import ui.band.me.extras.Band;
 import ui.band.me.extras.Keys;
@@ -98,10 +98,10 @@ public class BandActivity extends AppCompatActivity {
     }
 
     private void setTextViews() {
-        if(topTracks.size()!=0) {
+        if (topTracks.size() != 0) {
             RelativeLayout wrapperLayout = (RelativeLayout) findViewById(R.id.tracksTile);
             LinearLayout topTracksLayout = (LinearLayout) wrapperLayout.findViewById(R.id.tracksLayout);
-            for(int i=0;i<topTracks.size();i++) {
+            for (int i = 0; i < topTracks.size(); i++) {
 
                 LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -169,11 +169,23 @@ public class BandActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.home) {
             NavUtils.navigateUpFromSameTask(this);
-        }
-        else if(id == R.id.action_share) {
+        } else if (id == R.id.action_share) {
             //creates and shows dialog to user
-            ShareDialogFragment.newInstance(bandName)
-                    .show(this.getFragmentManager(), "Share");
+            if (Keys.API.TWITTER_ACCESS_TOKEN != null && Keys.API.TWITTER_ACCESS_TOKEN_SECRET != null) {
+                ShareDialogFragment.newInstance(bandName)
+                        .show(this.getFragmentManager(), "Share");
+            } else {
+                new AlertDialog.Builder(this)
+                        .setMessage("Are aren't currently logged in. Please login to use the share functionality")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+            }
+
 
         }
 
