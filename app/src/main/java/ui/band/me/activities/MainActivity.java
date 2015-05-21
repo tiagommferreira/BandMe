@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -31,16 +32,15 @@ import org.json.JSONObject;
 import java.lang.reflect.Field;
 import java.text.Normalizer;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import ui.band.me.API.APIListener;
 import ui.band.me.API.APIThread;
+import ui.band.me.R;
 import ui.band.me.database.BandMeDB;
 import ui.band.me.extras.Band;
 import ui.band.me.extras.BandCard;
 import ui.band.me.extras.Keys;
 import ui.band.me.fragments.NavigationDrawerFragment;
-import ui.band.me.R;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -146,6 +146,12 @@ public class MainActivity extends AppCompatActivity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     Keys.Database.database.insertSearch(v.getText().toString());
+
+                    // hide virtual keyboard
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(),
+                            InputMethodManager.RESULT_UNCHANGED_SHOWN);
+
                     return true;
                 }
                 return false;

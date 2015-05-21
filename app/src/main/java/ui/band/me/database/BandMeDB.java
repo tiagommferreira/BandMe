@@ -4,7 +4,6 @@ package ui.band.me.database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -15,7 +14,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import ui.band.me.activities.MainActivity;
 import ui.band.me.extras.Band;
 import ui.band.me.extras.Track;
 
@@ -92,23 +90,26 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
         //get a writable database
         SQLiteDatabase database = this.getWritableDatabase();
 
-        //using content values in order to easily insert into the SQLite database
-        ContentValues values = new ContentValues();
+        if(!itemExistsInDb(database, "Search", "information", search)){
+            //using content values in order to easily insert into the SQLite database
+            ContentValues values = new ContentValues();
 
-        //creating timestamp
-        java.util.Date date= new java.util.Date();
+            //creating timestamp
+            java.util.Date date= new java.util.Date();
 
-        // insert values
-        values.put("information", search);
-        values.put("timestamp",new Timestamp(date.getTime()).toString());
+            // insert values
+            values.put("information", search);
+            values.put("timestamp",new Timestamp(date.getTime()).toString());
 
-        //insert into the database and release the resources
-        try{
-            database.insert("Search", null, values);
-            Log.d("Search saved",values.get("information").toString());
-        }catch(SQLiteConstraintException e){
-            e.printStackTrace();
+            //insert into the database and release the resources
+            try{
+                database.insert("Search", null, values);
+                Log.d("Search saved",values.get("information").toString());
+            }catch(SQLiteConstraintException e){
+                e.printStackTrace();
+            }
         }
+
         database.close();
     }
 
@@ -136,29 +137,32 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
         //get a writable database
         SQLiteDatabase database = this.getWritableDatabase();
 
-        //using content values in order to easily insert into the SQLite database
-        ContentValues values = new ContentValues();
+        if(!itemExistsInDb(database, "Band", "name", band.getName())) {
+            //using content values in order to easily insert into the SQLite database
+            ContentValues values = new ContentValues();
 
-        //creating timestamp
-        java.util.Date date= new java.util.Date();
+            //creating timestamp
+            java.util.Date date= new java.util.Date();
 
-        // insert values
-        values.put("name", band.getName());
-        values.put("followers",band.getFollowers());
-        values.put("spotify_uri",band.getUri());
-        values.put("popularity",band.getPopularity());
-        values.put("image_url",band.getImageLink());
-        values.put("biography","No biography");
-        values.put("timestamp",new Timestamp(date.getTime()).toString());
+            // insert values
+            values.put("name", band.getName());
+            values.put("followers",band.getFollowers());
+            values.put("spotify_uri",band.getUri());
+            values.put("popularity",band.getPopularity());
+            values.put("image_url",band.getImageLink());
+            values.put("biography","No biography");
+            values.put("timestamp",new Timestamp(date.getTime()).toString());
 
-        //insert into the database and release the resources
-        try{
-            database.insert("Band", null , values);
-            Log.d("Search saved",values.get("name").toString());
-        }catch(SQLiteConstraintException e){
-            database.update("Band", values,"name" +" = '"+ values.get("name") + "'", null);
-            Log.d("updated",".");
+            //insert into the database and release the resources
+            try{
+                database.insert("Band", null , values);
+                Log.d("Search saved",values.get("name").toString());
+            }catch(SQLiteConstraintException e){
+                database.update("Band", values,"name" +" = '"+ values.get("name") + "'", null);
+                Log.d("updated",".");
+            }
         }
+
         database.close();
     }
 
@@ -181,7 +185,6 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
         }
         return bandArrayList;
     }
-
 
     public ArrayList<Band> getBandsByName(String name) {
 
@@ -271,5 +274,89 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
             } while (cursor.moveToNext());
         }
         return trackList;
+    }
+
+    private boolean itemExistsInDb(SQLiteDatabase database, String table, String param, String value) {
+        String selectQuery = "SELECT * FROM "+ table + "  where " + param + " = " + "'" + value + "'";
+
+        Cursor cursor = database.rawQuery(selectQuery, null);
+
+        return cursor.moveToFirst();
+
+    }
+
+    public void insertFavourite(String band_name) {
+        //get a writable database
+        SQLiteDatabase database = this.getWritableDatabase();
+        int band_id = 0;
+        //get the band id from Band table
+        String selectQuery = "SELECT id FROM Band where name =" + "'" + band_name + "'";
+
+        Cursor cursor = database.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                band_id = cursor.getInt(0);
+            } while (cursor.moveToNext());
+        }
+
+        //using content values in order to easily insert into the SQLite database
+        ContentValues values = new ContentValues();
+
+        //creating timestamp
+        java.util.Date date= new java.util.Date();
+        Log.d("Band id to favourite",String.valueOf(band_id));
+        // insert values
+        values.put("band_id", band_id);
+        values.put("user_id", 1);
+        values.put("timestamp",new Timestamp(date.getTime()).toString());
+
+        //insert into the database and release the resources
+        try{
+            database.insert("Favourite", null , values);
+            Log.d("Favourite saved",values.get("band_id").toString());
+        }catch(SQLiteConstraintException e){
+            database.update("Favourite", values,"band_id" +" = '"+ values.get("band_id") + "'", null);
+            Log.d("updated",".");
+        }
+
+        database.close();
+    }
+
+    public boolean existsFavourite(String bandName) {
+
+        SQLiteDatabase database = this.getWritableDatabase();
+        String selectQuery = "SELECT id FROM Band where name =" + "'" + bandName + "'";
+        int band_id = 0;
+        Cursor cursor = database.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                band_id = cursor.getInt(0);
+            } while (cursor.moveToNext());
+        }
+
+        String selectFavouriteQuery = "SELECT band_id FROM Favourite where band_id = "  + band_id;
+        cursor = database.rawQuery(selectFavouriteQuery,null);
+
+        return cursor.moveToFirst();
+    }
+
+    public void removeFavourite(String bandName) {
+        String selectQuery = "SELECT id FROM Band where name =" + "'" + bandName + "'";
+        int band_id = 0;
+        SQLiteDatabase database = this.getWritableDatabase();
+        Cursor cursor = database.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                band_id = cursor.getInt(0);
+            } while (cursor.moveToNext());
+        }
+
+        String removeQuery = "DELETE FROM Favourite WHERE band_id = " + band_id;
+        if(database.delete("Favourite", "band_id="+band_id, null)>0) {
+            Log.d("Removed favourite",String.valueOf(band_id));
+        }
     }
 }

@@ -11,7 +11,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,12 +28,10 @@ import org.json.JSONObject;
 
 import java.text.Normalizer;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import ui.band.me.API.APIListener;
 import ui.band.me.API.APIThread;
 import ui.band.me.R;
-import ui.band.me.database.BandMeDB;
 import ui.band.me.extras.Band;
 import ui.band.me.extras.Keys;
 import ui.band.me.extras.Track;
@@ -99,7 +96,6 @@ public class BandActivity extends AppCompatActivity {
 
     }
 
-
     private void sendTrackRequest() {
         new APIThread(getRequestURL(bandId), new APIListener() {
             @Override
@@ -108,7 +104,7 @@ public class BandActivity extends AppCompatActivity {
                 Keys.Database.database.insertTracks(bandName,topTracks);
                 setTextViews();
             }
-        }).execute();
+        }).execute();/**/
     }
 
     private void setTextViews() {
@@ -165,11 +161,19 @@ public class BandActivity extends AppCompatActivity {
         return Normalizer.normalize(Keys.API.URL_SPOTIFY_ARTISTS + id + "/top-tracks?country=US", Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+
         getMenuInflater().inflate(R.menu.menu_band, menu);
+
+        MenuItem fav_button = menu.findItem(R.id.action_favourite);
+        if(Keys.Database.database.existsFavourite(bandName)) {
+            fav_button.setIcon(getResources().getDrawable(R.drawable.ic_star_white_24dp));
+        }
+
+
+
         return true;
     }
 
@@ -200,6 +204,22 @@ public class BandActivity extends AppCompatActivity {
                         .show();
             }
         }
+        else if(id == R.id.action_favourite) {
+
+            if(Keys.Database.database.existsFavourite(bandName)) {
+                Log.d("Favourite", "exists");
+                Keys.Database.database.removeFavourite(bandName);
+                item.setIcon(getResources().getDrawable(R.drawable.ic_star_outline_white_24dp));
+            }
+            else {
+                Log.d("Favourite", "does not exist");
+                Keys.Database.database.insertFavourite(bandName);
+                item.setIcon(getResources().getDrawable(R.drawable.ic_star_white_24dp));
+            }
+
+
+        }
+
         return super.onOptionsItemSelected(item);
     }
 

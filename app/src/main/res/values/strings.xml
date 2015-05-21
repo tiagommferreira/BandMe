@@ -14,5 +14,6 @@
     <string name="action_search">Search</string>
     <string name="search_hint">Enter band name</string>
     <string name="action_share">Share</string>
+    <string name="action_favourite">Favourite</string>
 
 </resources>
