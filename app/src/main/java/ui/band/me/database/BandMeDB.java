@@ -76,7 +76,6 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
         String favouriteTable = "drop table if exists favourite";
         String songTable = "drop table if exists song";
 
-
         db.execSQL(userTable);
         db.execSQL(bandTable);
         db.execSQL(genreTable);
