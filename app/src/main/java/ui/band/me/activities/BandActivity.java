@@ -176,7 +176,7 @@ public class BandActivity extends AppCompatActivity {
                         .show(this.getFragmentManager(), "Share");
             } else {
                 new AlertDialog.Builder(this)
-                        .setMessage("Are aren't currently logged in. Please login to use the share functionality")
+                        .setMessage("You aren't currently logged in. Please login to use the share functionality")
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
