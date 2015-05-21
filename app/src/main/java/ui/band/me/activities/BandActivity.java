@@ -1,7 +1,10 @@
 package ui.band.me.activities;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
@@ -69,38 +72,40 @@ public class BandActivity extends AppCompatActivity {
         Band band = (Band) intent.getSerializableExtra("band");
         bandName = band.getName();
 
-        ArrayList<HashMap<String,String>> bands = Keys.Database.database.getAllBands();
-        for(int i=0;i<bands.size();i++) {
-            Log.d("es here too", bands.get(i).toString());
-        }
-
         getSupportActionBar().setTitle(band.getName());
 
 
         bandPicture = (ImageView) findViewById(R.id.bandPic);
         Picasso.with(this).load(band.getImageLink()).into(bandPicture);
-        bandId = band.getId();
+
+        if(isOnline())
+            bandId = band.getId();
 
         discographyTile = findViewById(R.id.discographyTile);
         spotifyTile = findViewById(R.id.spotifyTile);
         tracksTile = findViewById(R.id.tracksTile);
-        setupTracksTile();
+        tracksImage = (ImageView) tracksTile.findViewById(R.id.tracksImage);
+
+        if(isOnline()) {
+            sendTrackRequest();
+            //adds top tracks to database
+        } else {
+            //checks in db instead of the required band
+            this.topTracks = Keys.Database.database.getTracksFromBand(bandName);
+            setTextViews();
+        }
         recommendedTile = findViewById(R.id.recommendedTile);
         bioTile = findViewById(R.id.bioTile);
 
     }
 
-    private void setupTracksTile() {
-
-        tracksImage = (ImageView) tracksTile.findViewById(R.id.tracksImage);
-        sendTrackRequest();
-    }
 
     private void sendTrackRequest() {
         new APIThread(getRequestURL(bandId), new APIListener() {
             @Override
             public void requestCompleted(JSONObject response) {
                 topTracks = parseTracksJSON(response);
+                Keys.Database.database.insertTracks(bandName,topTracks);
                 setTextViews();
             }
         }).execute();
@@ -194,11 +199,15 @@ public class BandActivity extends AppCompatActivity {
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .show();
             }
-
-
         }
-
         return super.onOptionsItemSelected(item);
+    }
+
+    public boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
 }

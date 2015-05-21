@@ -1,6 +1,9 @@
 package ui.band.me.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -66,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         drawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
-        drawerFragment.setUp(R.id.fragment_navigation_drawer,(DrawerLayout) findViewById(R.id.drawer_layout), toolbar);
+        drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), toolbar);
 
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerLayout.setStatusBarBackground(R.color.primaryColorDark);
@@ -78,9 +81,10 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onItemClick(CardItemView cardItemView, int pos) {
+                Log.d("CLICKED",String.valueOf(mBandList.get(pos)));
                 startBandActivity(mBandList.get(pos));
-
-                Keys.Database.database.insertBand(mBandList.get(pos));
+                if(isOnline())
+                    Keys.Database.database.insertBand(mBandList.get(pos));
             }
 
             @Override
@@ -92,10 +96,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startBandActivity(Band band) {
-        Intent i = new Intent(this,BandActivity.class);
+        Intent i = new Intent(this, BandActivity.class);
         i.putExtra("band", band);
-       // i.putExtra("database",bandMeDatabase);
-
         startActivity(i);
 
     }
@@ -125,8 +127,14 @@ public class MainActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 searchClearButton.setEnabled(true);
                 searchClearButton.setVisibility(View.VISIBLE);
-                sendBandRequest(s.toString());
-
+                if (isOnline()) {
+                    sendBandRequest(s.toString());
+                } else {
+                    mBandList = Keys.Database.database.getBandsByName(s.toString());
+                    Log.d("new answer",String.valueOf(mBandList.size()));
+                    removePrevCards();
+                    addCards();
+                }
             }
 
             @Override
@@ -158,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void addCards() {
 
-        for(Band band: mBandList) {
+        for (Band band : mBandList) {
             BandCard card = new BandCard(this);
             card.setTitle(band.getName());
 
@@ -173,11 +181,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void sendBandRequest(String bandName) {
 
-        new APIThread(getRequestURL(bandName),new APIListener() {
+        new APIThread(getRequestURL(bandName), new APIListener() {
             @Override
             public void requestCompleted(JSONObject response) {
                 mBandList = parseBandJSON(response);
-                for(Band band: mBandList) {
+                for (Band band : mBandList) {
                     Log.d("Band name", band.getName());
                 }
                 removePrevCards();
@@ -193,13 +201,13 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Band> parseBandJSON(JSONObject response) {
         ArrayList<Band> listBands = new ArrayList<>();
 
-        if(response != null && response.length()>0) {
+        if (response != null && response.length() > 0) {
             try {
                 JSONObject artistsObject = response.getJSONObject(Keys.BandKeys.KEY_ARTISTS);
 
                 JSONArray itemsArray = artistsObject.getJSONArray(Keys.BandKeys.KEY_ITEMS);
 
-                for(int i = 0; i < itemsArray.length();i++) {
+                for (int i = 0; i < itemsArray.length(); i++) {
                     Band band = new Band();
                     JSONObject currentItem = itemsArray.getJSONObject(i);
                     band.setId(currentItem.getString(Keys.BandKeys.KEY_ID));
@@ -208,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
                     JSONArray genresArray = currentItem.getJSONArray(Keys.BandKeys.KEY_GENRES);
                     ArrayList<String> genres = new ArrayList<>();
 
-                    for(int j = 0; j<genresArray.length();j++) {
+                    for (int j = 0; j < genresArray.length(); j++) {
                         genres.add(genresArray.getString(j));
                     }
 
@@ -265,5 +273,12 @@ public class MainActivity extends AppCompatActivity {
         if (drawerFragment != null) {
             drawerFragment.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    public boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 }

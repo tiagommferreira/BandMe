@@ -17,12 +17,13 @@ import java.util.HashMap;
 
 import ui.band.me.activities.MainActivity;
 import ui.band.me.extras.Band;
+import ui.band.me.extras.Track;
 
 
 public class BandMeDB extends SQLiteOpenHelper implements Serializable{
 
     public BandMeDB(Context context) {
-        super(context, "BandMev2", null, 1);
+        super(context, "BandMev4", null, 1);
     }
 
     @Override
@@ -49,6 +50,9 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
         //creating favourite table
         String favouriteTable ="create table if not exists Favourite (band_id INTEGER, user_id INTEGER, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY(band_id) REFERENCES Band(id), FOREIGN KEY(user_id) REFERENCES User(id), CONSTRAINT fav_pk PRIMARY KEY(user_id,band_id));";
 
+        //creating song table
+        String songTable = "create table if not exists Song ( id INTEGER PRIMARY KEY AUTOINCREMENT,  name varchar,  band_id INTEGER, image varchar, FOREIGN KEY(band_id) REFERENCES Band(id) )";
+
         db.execSQL(userTable);
         db.execSQL(bandTable);
         db.execSQL(genreTable);
@@ -56,6 +60,7 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
         db.execSQL(shareTable);
         db.execSQL(bandGenreTable);
         db.execSQL(favouriteTable);
+        db.execSQL(songTable);
 
     }
 
@@ -69,6 +74,8 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
         String shareTable = "drop table if exists share";
         String bandGenreTable = "drop table if exists band_genre";
         String favouriteTable = "drop table if exists favourite";
+        String songTable = "drop table if exists song";
+
 
         db.execSQL(userTable);
         db.execSQL(bandTable);
@@ -77,6 +84,7 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
         db.execSQL(shareTable);
         db.execSQL(bandGenreTable);
         db.execSQL(favouriteTable);
+        db.execSQL(songTable);
 
         onCreate(db);
     }
@@ -139,6 +147,7 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
         values.put("name", band.getName());
         values.put("followers",band.getFollowers());
         values.put("spotify_uri",band.getUri());
+        values.put("popularity",band.getPopularity());
         values.put("image_url",band.getImageLink());
         values.put("biography","No biography");
         values.put("timestamp",new Timestamp(date.getTime()).toString());
@@ -172,5 +181,96 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
             } while (cursor.moveToNext());
         }
         return bandArrayList;
+    }
+
+
+    public ArrayList<Band> getBandsByName(String name) {
+
+        ArrayList<Band> bandArrayList = new ArrayList<Band>();
+
+        String selectQuery = "SELECT * FROM Band where name =" + "'" + name + "'";
+
+        SQLiteDatabase database = this.getWritableDatabase();
+
+        Cursor cursor = database.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Band currentBand = new Band();
+                currentBand.setName(cursor.getString(1));
+                currentBand.setFollowers(Integer.valueOf(cursor.getString(2)));
+                currentBand.setPopularity(Integer.valueOf(cursor.getString(3)));
+                currentBand.setUri(cursor.getString(4));
+                currentBand.setImageLink(cursor.getString(5));
+                bandArrayList.add(currentBand);
+            } while (cursor.moveToNext());
+        }
+        return bandArrayList;
+    }
+
+    public void insertTracks(String bandName, ArrayList<Track> topTracks) {
+        //get a writable database
+        SQLiteDatabase database = this.getWritableDatabase();
+
+        //creating timestamp
+        java.util.Date date= new java.util.Date();
+
+        String select = "SELECT id from band where name =" + "'" + bandName + "'";
+
+        String bandId="";
+        Cursor firstCursor = database.rawQuery(select,null);
+        if(firstCursor.moveToFirst()) {
+            bandId = firstCursor.getString(0);
+        }
+
+
+        for(int i=0;i<topTracks.size();i++) {
+            //using content values in order to easily insert into the SQLite database
+            ContentValues values = new ContentValues();
+            values.put("name",topTracks.get(i).getName());
+            values.put("band_id",Integer.valueOf(bandId));
+            values.put("image",topTracks.get(i).getAlbum_image_url());
+
+            //insert into the database and release the resources
+            try{
+                database.insert("Song", null , values);
+                Log.d("Song saved",values.get("name").toString());
+            }catch(SQLiteConstraintException e){
+                database.update("Song", values,"name" +" = '"+ values.get("name") + "'", null);
+                Log.d("updated",".");
+            }
+        }
+        database.close();
+
+    }
+
+    public ArrayList<Track> getTracksFromBand(String bandName) {
+        SQLiteDatabase database = this.getWritableDatabase();
+
+        ArrayList<Track> trackList = new ArrayList<Track>();
+
+        Log.d("band name",bandName);
+
+        String select = "SELECT id from band where name =" + "'" + bandName + "'";
+
+        String bandId="";
+        Cursor firstCursor = database.rawQuery(select,null);
+        if(firstCursor.moveToFirst()) {
+            bandId = firstCursor.getString(0);
+        }
+
+        String selectQuery = "SELECT * FROM Song where band_id =" + "'" + bandId + "'";
+
+        Cursor cursor = database.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Track currentTrack = new Track();
+                currentTrack.setName(cursor.getString(1));
+                currentTrack.setAlbum_image_url(cursor.getString(3));
+                trackList.add(currentTrack);
+            } while (cursor.moveToNext());
+        }
+        return trackList;
     }
 }
