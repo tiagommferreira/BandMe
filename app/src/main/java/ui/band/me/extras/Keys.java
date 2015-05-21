@@ -1,5 +1,7 @@
 package ui.band.me.extras;
 
+import ui.band.me.database.BandMeDB;
+
 /**
  * Created by Tiago on 05/05/2015.
  */
@@ -30,5 +32,8 @@ public interface Keys {
         public static final String TWITTER_SECRET = "j1ZdbXDZDzr4mA4mxzWO4jIYhuDB11FwXHT9TNPm5PJuIYLJsZ";
         public static String TWITTER_ACCESS_TOKEN = null;
         public static String TWITTER_ACCESS_TOKEN_SECRET = null;
+    }
+    public class Database {
+        public static BandMeDB database;
     }
 }

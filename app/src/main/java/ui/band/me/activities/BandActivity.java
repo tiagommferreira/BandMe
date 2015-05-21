@@ -7,6 +7,8 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,10 +26,12 @@ import org.json.JSONObject;
 
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import ui.band.me.API.APIListener;
 import ui.band.me.API.APIThread;
 import ui.band.me.R;
+import ui.band.me.database.BandMeDB;
 import ui.band.me.extras.Band;
 import ui.band.me.extras.Keys;
 import ui.band.me.extras.Track;
@@ -64,6 +68,11 @@ public class BandActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Band band = (Band) intent.getSerializableExtra("band");
         bandName = band.getName();
+
+        ArrayList<HashMap<String,String>> bands = Keys.Database.database.getAllBands();
+        for(int i=0;i<bands.size();i++) {
+            Log.d("es here too", bands.get(i).toString());
+        }
 
         getSupportActionBar().setTitle(band.getName());
 

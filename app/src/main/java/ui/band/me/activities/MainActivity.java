@@ -8,9 +8,11 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,9 +28,11 @@ import org.json.JSONObject;
 import java.lang.reflect.Field;
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import ui.band.me.API.APIListener;
 import ui.band.me.API.APIThread;
+import ui.band.me.database.BandMeDB;
 import ui.band.me.extras.Band;
 import ui.band.me.extras.BandCard;
 import ui.band.me.extras.Keys;
@@ -54,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Keys.Database.database = new BandMeDB(this);
+
         toolbar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
 
@@ -73,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(CardItemView cardItemView, int pos) {
                 startBandActivity(mBandList.get(pos));
+
+                Keys.Database.database.insertBand(mBandList.get(pos));
             }
 
             @Override
@@ -86,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
     private void startBandActivity(Band band) {
         Intent i = new Intent(this,BandActivity.class);
         i.putExtra("band", band);
+       // i.putExtra("database",bandMeDatabase);
 
         startActivity(i);
 
@@ -117,10 +126,21 @@ public class MainActivity extends AppCompatActivity {
                 searchClearButton.setEnabled(true);
                 searchClearButton.setVisibility(View.VISIBLE);
                 sendBandRequest(s.toString());
+
             }
 
             @Override
             public void afterTextChanged(Editable s) {
+            }
+        });
+        toolbarSearchView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    Keys.Database.database.insertSearch(v.getText().toString());
+                    return true;
+                }
+                return false;
             }
         });
 
@@ -137,7 +157,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addCards() {
-
 
         for(Band band: mBandList) {
             BandCard card = new BandCard(this);

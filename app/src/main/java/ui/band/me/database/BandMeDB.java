@@ -1,20 +1,28 @@
 package ui.band.me.database;
 
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.DatabaseErrorHandler;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
-public class BandMeDB extends SQLiteOpenHelper{
+import java.io.Serializable;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import ui.band.me.activities.MainActivity;
+import ui.band.me.extras.Band;
 
 
-    public BandMeDB(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, name, factory, version);
-    }
+public class BandMeDB extends SQLiteOpenHelper implements Serializable{
 
-    public BandMeDB(Context context, String name, SQLiteDatabase.CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
-        super(context, name, factory, version, errorHandler);
+    public BandMeDB(Context context) {
+        super(context, "BandMev2", null, 1);
     }
 
     @Override
@@ -24,7 +32,7 @@ public class BandMeDB extends SQLiteOpenHelper{
         String userTable = "Create table if not exists User(id INTEGER PRIMARY KEY AUTOINCREMENT, username varchar UNIQUE, avatar varchar, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP);";
 
         //creating band table
-        String bandTable = "Create table if not exists Band(id INTEGER PRIMARY KEY AUTOINCREMENT, name varchar,followers integer, popularity integer, spotify_uri varchar, image_url varchar, biography text, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP);";
+        String bandTable = "Create table if not exists Band(id INTEGER PRIMARY KEY AUTOINCREMENT, name varchar UNIQUE,followers integer, popularity integer, spotify_uri varchar, image_url varchar, biography text, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP);";
 
         //creating genre table
         String genreTable = "create table if not exists Genre(id INTEGER PRIMARY KEY AUTOINCREMENT, name varchar UNIQUE, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP);";
@@ -71,5 +79,98 @@ public class BandMeDB extends SQLiteOpenHelper{
         db.execSQL(favouriteTable);
 
         onCreate(db);
+    }
+
+    public void insertSearch(String search) {
+        //get a writable database
+        SQLiteDatabase database = this.getWritableDatabase();
+
+        //using content values in order to easily insert into the SQLite database
+        ContentValues values = new ContentValues();
+
+        //creating timestamp
+        java.util.Date date= new java.util.Date();
+
+        // insert values
+        values.put("information", search);
+        values.put("timestamp",new Timestamp(date.getTime()).toString());
+
+        //insert into the database and release the resources
+        try{
+            database.insert("Search", null, values);
+            Log.d("Search saved",values.get("information").toString());
+        }catch(SQLiteConstraintException e){
+            e.printStackTrace();
+        }
+        database.close();
+    }
+
+    public ArrayList<HashMap<String, String>> getAllSearches() {
+
+        ArrayList<HashMap<String, String>> searchesArrayList = new ArrayList<HashMap<String, String>>();
+
+        String selectQuery = "SELECT * FROM Search";
+
+        SQLiteDatabase database = this.getWritableDatabase();
+
+        Cursor cursor = database.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                HashMap<String, String> searchMap = new HashMap<String, String>();
+                searchMap.put("information", cursor.getString(1));
+                searchesArrayList.add(searchMap);
+            } while (cursor.moveToNext());
+        }
+        return searchesArrayList;
+    }
+
+    public void insertBand(Band band) {
+        //get a writable database
+        SQLiteDatabase database = this.getWritableDatabase();
+
+        //using content values in order to easily insert into the SQLite database
+        ContentValues values = new ContentValues();
+
+        //creating timestamp
+        java.util.Date date= new java.util.Date();
+
+        // insert values
+        values.put("name", band.getName());
+        values.put("followers",band.getFollowers());
+        values.put("spotify_uri",band.getUri());
+        values.put("image_url",band.getImageLink());
+        values.put("biography","No biography");
+        values.put("timestamp",new Timestamp(date.getTime()).toString());
+
+        //insert into the database and release the resources
+        try{
+            database.insert("Band", null , values);
+            Log.d("Search saved",values.get("name").toString());
+        }catch(SQLiteConstraintException e){
+            database.update("Band", values,"name" +" = '"+ values.get("name") + "'", null);
+            Log.d("updated",".");
+        }
+        database.close();
+    }
+
+    public ArrayList<HashMap<String, String>> getAllBands() {
+
+        ArrayList<HashMap<String, String>> bandArrayList = new ArrayList<HashMap<String, String>>();
+
+        String selectQuery = "SELECT * FROM Band";
+
+        SQLiteDatabase database = this.getWritableDatabase();
+
+        Cursor cursor = database.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                HashMap<String, String> bandMap = new HashMap<String, String>();
+                bandMap.put("name", cursor.getString(1));
+                bandArrayList.add(bandMap);
+            } while (cursor.moveToNext());
+        }
+        return bandArrayList;
     }
 }

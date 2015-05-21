@@ -90,11 +90,11 @@ public class NavigationDrawerFragment extends Fragment {
         final View layout = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
 
         this.recyclerView = (RecyclerView) layout.findViewById(R.id.drawer_list);
-        this.recyclerAdapter = new DrawerRecyclerAdapter(getActivity(),getData());
+        this.recyclerAdapter = new DrawerRecyclerAdapter(getActivity(), getData());
         recyclerView.setAdapter(recyclerAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(),recyclerView, new RecyclerTouchListener.ClickListener() {
+        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
                 //TODO: meter a iniciar as atividades
@@ -122,12 +122,13 @@ public class NavigationDrawerFragment extends Fragment {
                 Log.d("Twitter", session.getAuthToken().token);
                 Log.d("Twitter", session.getAuthToken().secret);
                 TwitterApiClient twitterApi = TwitterCore.getInstance().getApiClient();
-                twitterApi.getAccountService().verifyCredentials(null,null,new Callback<User>() {
+                twitterApi.getAccountService().verifyCredentials(null, null, new Callback<User>() {
                             @Override
                             public void success(Result<User> userResult) {
                                 User user = userResult.data;
-                                showImage(layout,user.profileImageUrlHttps);
+                                showImage(layout, user.profileImageUrlHttps);
                             }
+
                             @Override
                             public void failure(TwitterException e) {
                                 Log.d("Twitter", "failure");
@@ -135,9 +136,10 @@ public class NavigationDrawerFragment extends Fragment {
                         }
                 );
             }
+
             @Override
             public void failure(TwitterException exception) {
-                Log.d("Twitter","Result failure");
+                Log.d("Twitter", "Result failure");
                 exception.printStackTrace();
             }
         });
@@ -150,9 +152,9 @@ public class NavigationDrawerFragment extends Fragment {
     public static List<DrawerItemInfo> getData() {
         List<DrawerItemInfo> data = new ArrayList<>();
         //TODO: mudar isto para as cenas que queremos
-        int[] icons = {R.drawable.abc_btn_check_material,R.drawable.abc_btn_check_material};
-        String[] titles = {"Item melaco 1","Item melaco 2"};
-        for(int i = 0; i < titles.length && i < icons.length;i++) {
+        int[] icons = {R.drawable.abc_btn_check_material, R.drawable.abc_btn_check_material};
+        String[] titles = {"Item melaco 1", "Item melaco 2"};
+        for (int i = 0; i < titles.length && i < icons.length; i++) {
             DrawerItemInfo info = new DrawerItemInfo();
             info.iconId = icons[i];
             info.title = titles[i];
@@ -162,7 +164,7 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     private void showImage(View layout, String url) {
-        Log.d("Twitter",url);
+        Log.d("Twitter", url);
         ImageView profile_picture = (ImageView) layout.findViewById(R.id.profile_image);
         Picasso.with(this.getActivity()).load(url)
                 .transform(new RoundedTransformation(100, 0))
@@ -174,13 +176,13 @@ public class NavigationDrawerFragment extends Fragment {
     public void setUp(int fragment_id, DrawerLayout drawerLayout, final Toolbar toolbar) {
         this.mContainerView = getActivity().findViewById(fragment_id);
         this.mDrawerLayout = drawerLayout;
-        this.mDrawerToggle = new ActionBarDrawerToggle(getActivity(),drawerLayout,toolbar,R.string.drawer_open,R.string.drawer_close){
+        this.mDrawerToggle = new ActionBarDrawerToggle(getActivity(), drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                if(!mUserLearnedDrawer) {
+                if (!mUserLearnedDrawer) {
                     mUserLearnedDrawer = true;
-                    saveToPreferences(getActivity(),KEY_USER_LEARNED_DRAWER,mUserLearnedDrawer+"");
+                    saveToPreferences(getActivity(), KEY_USER_LEARNED_DRAWER, mUserLearnedDrawer + "");
                 }
 
                 getActivity().invalidateOptionsMenu();
@@ -195,11 +197,11 @@ public class NavigationDrawerFragment extends Fragment {
 
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
-                if(slideOffset<0.6)
-                    toolbar.setAlpha(1-slideOffset);
+                if (slideOffset < 0.6)
+                    toolbar.setAlpha(1 - slideOffset);
             }
         };
-        if(!mUserLearnedDrawer && !mFromSavedInstanceState) {
+        if (!mUserLearnedDrawer && !mFromSavedInstanceState) {
             mDrawerLayout.openDrawer(mContainerView);
         }
         mDrawerLayout.setDrawerListener(mDrawerToggle);
@@ -211,16 +213,16 @@ public class NavigationDrawerFragment extends Fragment {
         });
     }
 
-    public static void saveToPreferences(Context context, String preferenceName, String preferenceValue){
-        SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_FILE_NAME,context.MODE_PRIVATE);
+    public static void saveToPreferences(Context context, String preferenceName, String preferenceValue) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_FILE_NAME, context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(preferenceName,preferenceValue);
+        editor.putString(preferenceName, preferenceValue);
         editor.apply();
     }
 
-    public static String readFromPreferences(Context context, String preferenceName, String defaultValue){
-        SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_FILE_NAME,context.MODE_PRIVATE);
-        return sharedPreferences.getString(preferenceName,defaultValue);
+    public static String readFromPreferences(Context context, String preferenceName, String defaultValue) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_FILE_NAME, context.MODE_PRIVATE);
+        return sharedPreferences.getString(preferenceName, defaultValue);
     }
 
 
@@ -228,9 +230,9 @@ public class NavigationDrawerFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // Pass the activity result to the login button.
-        Log.d("Fragment","Activity result");
-        Log.d("Data",data.toString());
-        loginButton.onActivityResult(requestCode, resultCode,data);
+        Log.d("Fragment", "Activity result");
+        Log.d("Data", data.toString());
+        loginButton.onActivityResult(requestCode, resultCode, data);
     }
 
 
