@@ -96,12 +96,20 @@
                     android:clickable="true"
                     android:elevation="2dp">
 
-                    <RelativeLayout
+                    <ImageView
+                        android:id="@+id/recommendedImage"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/primaryColor">
+                        android:scaleType="centerCrop" />
+
+                    <RelativeLayout
+                        android:id="@+id/recommendedTileLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
 
                     </RelativeLayout>
+
+
 
                 </RelativeLayout>
 

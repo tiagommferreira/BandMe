@@ -14,9 +14,6 @@ import java.io.InputStreamReader;
 
 import io.fabric.sdk.android.services.concurrency.AsyncTask;
 
-/**
- * Created by Tiago on 16-05-2015.
- */
 public class APIThread extends AsyncTask<String,String,JSONObject> {
 
     private String siteUrl;

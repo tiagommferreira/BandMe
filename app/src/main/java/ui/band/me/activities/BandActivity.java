@@ -54,6 +54,9 @@ public class BandActivity extends AppCompatActivity {
     private ArrayList<Track> topTracks = new ArrayList<>();
     private ImageView tracksImage;
 
+    private Band relatedArtist = new Band();
+    private ImageView recommendedImage;
+
     private String bandId;
 
     private Band band;
@@ -79,17 +82,16 @@ public class BandActivity extends AppCompatActivity {
             Intent intent = getIntent();
             band = (Band) intent.getSerializableExtra("band");
         }
-
         bandName = band.getName();
 
         getSupportActionBar().setTitle(band.getName());
 
-
         bandPicture = (ImageView) findViewById(R.id.bandPic);
         Picasso.with(this).load(band.getImageLink()).into(bandPicture);
 
-        if(isOnline())
+        if (isOnline()){
             bandId = band.getId();
+        }
 
         discographyTile = findViewById(R.id.discographyTile);
         discographyTile.setOnClickListener(new View.OnClickListener() {
@@ -99,13 +101,25 @@ public class BandActivity extends AppCompatActivity {
             }
         });
 
-
         spotifyTile = findViewById(R.id.spotifyTile);
         tracksTile = findViewById(R.id.tracksTile);
         tracksImage = (ImageView) tracksTile.findViewById(R.id.tracksImage);
+        recommendedTile = findViewById(R.id.recommendedTile);
+        recommendedImage = (ImageView) recommendedTile.findViewById(R.id.recommendedImage);
 
-        if(isOnline()) {
+
+        recommendedTile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startBandActivity();
+            }
+        });
+
+
+        if (isOnline()) {
             sendTrackRequest();
+            sendRelatedBandRequest();
+            //adds top tracks to database
         } else {
             //checks in db instead of the required band
             this.topTracks = Keys.Database.database.getTracksFromBand(bandName);
@@ -123,15 +137,95 @@ public class BandActivity extends AppCompatActivity {
         startActivity(i);
     }
 
+    private void startBandActivity() {
+        Intent i = new Intent(this, BandActivity.class);
+        Band newBand = relatedArtist;
+        i.putExtra("band", newBand);
+        finish();
+        startActivity(i);
+    }
+
+    private void sendRelatedBandRequest() {
+        new APIThread(getRelatedArtistRequestUrl(bandId), new APIListener() {
+            @Override
+            public void requestCompleted(JSONObject response) {
+                String relatedId = parseRelatedJSON(response);
+                sendBandRequest(relatedId);
+            }
+        }).execute();
+    }
+
+    private void sendBandRequest(String relatedId) {
+        new APIThread(getBandRequestUrl(relatedId), new APIListener() {
+            @Override
+            public void requestCompleted(JSONObject response) {
+                Log.d("band", response.toString());
+                relatedArtist = parseBandJSON(response);
+                setRelatedView();
+                Keys.Database.database.insertBand(relatedArtist);
+            }
+        }).execute();
+    }
+
     private void sendTrackRequest() {
         new APIThread(getRequestURL(bandId), new APIListener() {
             @Override
             public void requestCompleted(JSONObject response) {
                 topTracks = parseTracksJSON(response);
-                Keys.Database.database.insertTracks(bandName,topTracks);
+                Keys.Database.database.insertTracks(bandName, topTracks);
                 setTextViews();
             }
         }).execute();
+    }
+
+    public void setRelatedView() {
+        if (relatedArtist.getName() != null) {
+            RelativeLayout wrapperLayout = (RelativeLayout) findViewById(R.id.recommendedTile);
+            RelativeLayout topTracksLayout = (RelativeLayout) wrapperLayout.findViewById(R.id.recommendedTileLayout);
+
+            LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+            TextView topTrackTextView = new TextView(this);
+            topTrackTextView.setText(relatedArtist.getName());
+            topTrackTextView.setBackgroundColor(getResources().getColor(R.color.textInImageBG));
+            topTrackTextView.setTextColor(getResources().getColor(R.color.textInImageTC));
+            topTrackTextView.setTextSize(getResources().getDimension(R.dimen.topTrackTS));
+            topTrackTextView.setLayoutParams(linearParams);
+
+            topTracksLayout.addView(topTrackTextView);
+
+            Picasso.with(this).load(relatedArtist.getImageLink()).into(recommendedImage);
+        }
+    }
+
+    public Band parseBandJSON(JSONObject response) {
+        Band band = new Band();
+        if (response != null && response.length() > 0) {
+            try {
+                band.setId(response.getString(Keys.BandKeys.KEY_ID));
+                band.setName(response.getString(Keys.BandKeys.KEY_NAME));
+
+                JSONArray genresArray = response.getJSONArray(Keys.BandKeys.KEY_GENRES);
+                ArrayList<String> genres = new ArrayList<>();
+
+                for (int j = 0; j < genresArray.length(); j++) {
+                    genres.add(genresArray.getString(j));
+                }
+
+                band.setGenres(genres);
+
+                band.setFollowers(response.getJSONObject(Keys.BandKeys.KEY_FOLLOWERS).getInt("total"));
+                band.setPopularity(response.getInt(Keys.BandKeys.KEY_POPULARITY));
+                band.setUri(response.getString(Keys.BandKeys.KEY_URI));
+                band.setImageLink(response.getJSONArray(Keys.BandKeys.KEY_IMAGES).getJSONObject(0).getString("url"));
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return band;
     }
 
     private void setTextViews() {
@@ -154,8 +248,24 @@ public class BandActivity extends AppCompatActivity {
             }
             Picasso.with(this).load(topTracks.get(0).getAlbum_image_url()).into(tracksImage);
         }
+    }
 
 
+    private String parseRelatedJSON(JSONObject response) {
+        String relatedArtistId = "";
+
+        if (response != null && response.length() > 0) {
+            try {
+                JSONArray relatedArray = response.getJSONArray(Keys.TrackKeys.KEY_ARTIST);
+                JSONObject currentItem = relatedArray.getJSONObject(0);
+                relatedArtistId = String.valueOf(currentItem.getString("id"));
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return relatedArtistId;
     }
 
     private ArrayList<Track> parseTracksJSON(JSONObject response) {
@@ -184,6 +294,14 @@ public class BandActivity extends AppCompatActivity {
         return listTracks;
     }
 
+    String getBandRequestUrl(String id) {
+        return Normalizer.normalize(Keys.API.URL_SPOTIFY_ARTISTS + id, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
+    }
+
+    String getRelatedArtistRequestUrl(String id) {
+        return Normalizer.normalize(Keys.API.URL_SPOTIFY_ARTISTS + id + "/related-artists", Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
+    }
+
     String getRequestURL(String id) {
         return Normalizer.normalize(Keys.API.URL_SPOTIFY_ARTISTS + id + "/top-tracks?country=US", Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
     }
@@ -195,7 +313,7 @@ public class BandActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_band, menu);
 
         MenuItem fav_button = menu.findItem(R.id.action_favourite);
-        if(Keys.Database.database.existsFavourite(bandName)) {
+        if (Keys.Database.database.existsFavourite(bandName)) {
             fav_button.setIcon(getResources().getDrawable(R.drawable.ic_star_white_24dp));
         }
 
@@ -228,15 +346,13 @@ public class BandActivity extends AppCompatActivity {
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .show();
             }
-        }
-        else if(id == R.id.action_favourite) {
+        } else if (id == R.id.action_favourite) {
 
-            if(Keys.Database.database.existsFavourite(bandName)) {
+            if (Keys.Database.database.existsFavourite(bandName)) {
                 Log.d("Favourite", "exists");
                 Keys.Database.database.removeFavourite(bandName);
                 item.setIcon(getResources().getDrawable(R.drawable.ic_star_outline_white_24dp));
-            }
-            else {
+            } else {
                 Log.d("Favourite", "does not exist");
                 Keys.Database.database.insertFavourite(bandName);
                 item.setIcon(getResources().getDrawable(R.drawable.ic_star_white_24dp));

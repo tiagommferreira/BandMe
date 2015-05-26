@@ -23,6 +23,7 @@ public interface Keys {
         public static final String KEY_IMAGES = "images";
         public static final String KEY_NAME = "name";
         public static final String KEY_TRACKS = "tracks";
+        public static final String KEY_ARTIST = "artists";
 
     }
     public class API {
