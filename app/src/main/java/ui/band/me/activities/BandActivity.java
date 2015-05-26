@@ -189,20 +189,9 @@ public class BandActivity extends AppCompatActivity {
 
     public void setRelatedView() {
         if (relatedArtist.getName() != null) {
-            RelativeLayout wrapperLayout = (RelativeLayout) findViewById(R.id.recommendedTile);
-            RelativeLayout topTracksLayout = (RelativeLayout) wrapperLayout.findViewById(R.id.recommendedTileLayout);
 
-            LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-            TextView topTrackTextView = new TextView(this);
-            topTrackTextView.setText(relatedArtist.getName());
-            topTrackTextView.setBackgroundColor(getResources().getColor(R.color.textInImageBG));
-            topTrackTextView.setTextColor(getResources().getColor(R.color.textInImageTC));
-            topTrackTextView.setTextSize(getResources().getDimension(R.dimen.topTrackTS));
-            topTrackTextView.setLayoutParams(linearParams);
-
-            topTracksLayout.addView(topTrackTextView);
+            TextView band = (TextView) findViewById(R.id.recommendedLabel);
+            band.setText(relatedArtist.getName());
 
             Picasso.with(this).load(relatedArtist.getImageLink()).into(recommendedImage);
         }
@@ -247,10 +236,11 @@ public class BandActivity extends AppCompatActivity {
                         ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
                 TextView topTrackTextView = new TextView(this);
+                linearParams.setMargins(0,25,0,0);
                 topTrackTextView.setText(topTracks.get(i).getName());
                 topTrackTextView.setBackgroundColor(getResources().getColor(R.color.textInImageBG));
                 topTrackTextView.setTextColor(getResources().getColor(R.color.textInImageTC));
-                topTrackTextView.setTextSize(getResources().getDimension(R.dimen.topTrackTS));
+                topTrackTextView.setTextAppearance(getApplicationContext(),R.style.textInImageSmall);
                 topTrackTextView.setLayoutParams(linearParams);
 
                 topTracksLayout.addView(topTrackTextView);
