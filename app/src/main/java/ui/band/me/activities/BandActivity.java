@@ -46,13 +46,18 @@ public class BandActivity extends AppCompatActivity {
     private View recommendedTile;
     private View bioTile;
 
-    private String bandName;
 
+    static final String BAND = "band";
+
+    private String bandName;
 
     private ArrayList<Track> topTracks = new ArrayList<>();
     private ImageView tracksImage;
 
     private String bandId;
+
+    private Band band;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +70,16 @@ public class BandActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Intent intent = getIntent();
-        Band band = (Band) intent.getSerializableExtra("band");
+        if(savedInstanceState != null) {
+            Log.d("NAO É NULL", "TA NO SITIO CERTO");
+            band = (Band) savedInstanceState.getSerializable(BAND);
+        }
+        else {
+            Log.d("TA NULL", "TA NO SITIO ERRADO");
+            Intent intent = getIntent();
+            band = (Band) intent.getSerializableExtra("band");
+        }
+
         bandName = band.getName();
 
         getSupportActionBar().setTitle(band.getName());
@@ -79,21 +92,35 @@ public class BandActivity extends AppCompatActivity {
             bandId = band.getId();
 
         discographyTile = findViewById(R.id.discographyTile);
+        discographyTile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startDiscographyActivity();
+            }
+        });
+
+
         spotifyTile = findViewById(R.id.spotifyTile);
         tracksTile = findViewById(R.id.tracksTile);
         tracksImage = (ImageView) tracksTile.findViewById(R.id.tracksImage);
 
         if(isOnline()) {
             sendTrackRequest();
-            //adds top tracks to database
         } else {
             //checks in db instead of the required band
             this.topTracks = Keys.Database.database.getTracksFromBand(bandName);
             setTextViews();
         }
+
         recommendedTile = findViewById(R.id.recommendedTile);
         bioTile = findViewById(R.id.bioTile);
 
+    }
+
+    private void startDiscographyActivity() {
+        Intent i = new Intent(this, BandDiscographyActivity.class);
+        i.putExtra("bandId", bandId);
+        startActivity(i);
     }
 
     private void sendTrackRequest() {
@@ -104,7 +131,7 @@ public class BandActivity extends AppCompatActivity {
                 Keys.Database.database.insertTracks(bandName,topTracks);
                 setTextViews();
             }
-        }).execute();/**/
+        }).execute();
     }
 
     private void setTextViews() {
@@ -172,8 +199,6 @@ public class BandActivity extends AppCompatActivity {
             fav_button.setIcon(getResources().getDrawable(R.drawable.ic_star_white_24dp));
         }
 
-
-
         return true;
     }
 
@@ -228,6 +253,16 @@ public class BandActivity extends AppCompatActivity {
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the user's current game state
+        savedInstanceState.putSerializable(BAND, band);
+
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
     }
 
 }

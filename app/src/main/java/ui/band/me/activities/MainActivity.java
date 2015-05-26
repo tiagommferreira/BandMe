@@ -99,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
         Intent i = new Intent(this, BandActivity.class);
         i.putExtra("band", band);
         startActivity(i);
-
     }
 
     private void setUpSearch() {
