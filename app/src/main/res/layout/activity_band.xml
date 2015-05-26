@@ -1,6 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#C3C3C3">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -26,18 +27,29 @@
                 android:layout_below="@+id/bandPic"
                 android:padding="16dp">
 
+
                 <RelativeLayout
                     android:id="@+id/discographyTile"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:background="@drawable/custom_bg"
+                    android:background="#FFFFFF"
                     android:clickable="true"
                     android:elevation="2dp">
 
                     <ImageView
                         android:id="@+id/discographyImage"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:src="@drawable/icon_cd"/>
+
+                    <TextView
+                        android:id="@+id/discographyLabel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:gravity="center"
+                        style="@style/textInImageSmall"
+                        android:text="Discography"/>
 
 
                 </RelativeLayout>
@@ -48,7 +60,7 @@
                     android:layout_height="100dp"
                     android:layout_below="@id/discographyTile"
                     android:layout_marginTop="20dp"
-                    android:background="@drawable/custom_bg"
+                    android:background="#FFFFFF"
                     android:clickable="true"
                     android:elevation="2dp">
 
@@ -66,7 +78,7 @@
                     android:layout_height="220dp"
                     android:layout_marginLeft="20dp"
                     android:layout_toRightOf="@id/discographyTile"
-                    android:background="@drawable/custom_bg"
+                    android:background="#FFFFFF"
                     android:clickable="true"
                     android:elevation="2dp">
 
@@ -121,14 +133,13 @@
                     android:layout_marginLeft="20dp"
                     android:layout_marginTop="20dp"
                     android:layout_toRightOf="@id/recommendedTile"
-                    android:background="@drawable/custom_bg"
+                    android:background="#FFFFFF"
                     android:clickable="true"
                     android:elevation="2dp">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@color/primaryColor">
+                        android:layout_height="match_parent">
 
                     </RelativeLayout>
 

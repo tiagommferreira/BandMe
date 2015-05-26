@@ -22,4 +22,10 @@
         <item name="android:background">@color/textInImageBG</item>
     </style>
 
+    <style name="textInImageSmall">
+        <item name="android:textColor">@color/textInImageTC</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:background">@color/textInImageBG</item>
+    </style>
+
 </resources>

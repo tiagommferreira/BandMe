@@ -1,6 +1,7 @@
 package ui.band.me.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,6 +25,7 @@ import ui.band.me.R;
 import ui.band.me.adapters.DiscographyAdapter;
 import ui.band.me.extras.Album;
 import ui.band.me.extras.Keys;
+import ui.band.me.listeners.RecyclerTouchListener;
 
 public class BandDiscographyActivity extends AppCompatActivity {
 
@@ -51,6 +54,18 @@ public class BandDiscographyActivity extends AppCompatActivity {
         this.recyclerAdapter = new DiscographyAdapter(this, albums);
         recyclerView.setAdapter(recyclerAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(this, recyclerView, new RecyclerTouchListener.ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(albums.get(position).getUri()));
+                startActivity(i);
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+            }
+        }));
     }
 
     private void sendAlbumsRequest() {
@@ -74,9 +89,37 @@ public class BandDiscographyActivity extends AppCompatActivity {
 
                 a.setName(albumObject.getString("name"));
                 a.setImage_url(albumObject.getJSONArray("images").getJSONObject(0).getString("url"));
+                a.setUri(albumObject.getString("uri"));
                 albums.add(a);
+
+            }
+            ArrayList<Album> newAlbums = new ArrayList<Album>();
+            for (int i = 0; i < albums.size(); i++) {
+                Album album = new Album();
+                album.setName(albums.get(i).getName());
+                album.setImage_url(albums.get(i).getImage_url());
+                album.setUri(albums.get(i).getUri());
+                newAlbums.add(album);
+            }
+
+            boolean found = false;
+            for(int i = 0; i < albums.size(); i++) {
+                for (int j = 0; j < newAlbums.size(); j++) {
+                    if (albums.get(i).getName().equals(newAlbums.get(j).getName()) && found) {
+                        newAlbums.remove(j);
+                    } else if(albums.get(i).getName().equals(newAlbums.get(j).getName()) && !found) {
+                        found = true;
+                    }
+                }
+                found = false;
+            }
+            albums.clear();
+            albums.addAll(newAlbums);
+
+            for (int i = 0; i < albums.size(); i++) {
                 recyclerAdapter.notifyItemInserted(i);
             }
+
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -85,9 +128,8 @@ public class BandDiscographyActivity extends AppCompatActivity {
     }
 
     private String getRequestURL(String bandId) {
-        return Normalizer.normalize(Keys.API.URL_SPOTIFY_ARTISTS + bandId + "/albums", Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
+        return Normalizer.normalize(Keys.API.URL_SPOTIFY_ARTISTS + bandId + "/albums?album_type=album", Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
