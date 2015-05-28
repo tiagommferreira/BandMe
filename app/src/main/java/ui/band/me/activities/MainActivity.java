@@ -46,12 +46,14 @@ public class MainActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
 
-
     private ArrayList<Band> mBandList = new ArrayList<>();
     private MaterialListView mListView;
 
     private EditText toolbarSearchView;
     private ImageView searchClearButton;
+
+    private TextView welcomeTextView;
+    private TextView welcomeDescTextView;
 
     private NavigationDrawerFragment drawerFragment;
 
@@ -67,6 +69,9 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        welcomeTextView = (TextView) findViewById(R.id.HelloText);
+        welcomeDescTextView = (TextView) findViewById(R.id.descriptionHello);
 
         drawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
         drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), toolbar);
@@ -194,6 +199,8 @@ public class MainActivity extends AppCompatActivity {
                 for (Band band : mBandList) {
                     Log.d("Band name", band.getName());
                 }
+                welcomeDescTextView.setVisibility(View.INVISIBLE);
+                welcomeTextView.setVisibility(View.INVISIBLE);
                 removePrevCards();
                 addCards();
             }
@@ -281,10 +288,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
     public boolean isOnline() {
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
+    public void setWelcome(String name) {
+        name = name.split(" ")[0];
+        welcomeTextView.setText(welcomeTextView.getText()+"\r\n"+name.toUpperCase());
     }
 }

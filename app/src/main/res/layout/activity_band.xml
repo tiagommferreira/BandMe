@@ -9,7 +9,7 @@
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#C3C3C3">
+        android:background="#E9E9EA">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -77,6 +77,15 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:src="@drawable/spotify_image" />
+
+                        <TextView
+                            android:id="@+id/spotifyLabel"
+                            style="@style/textInImageSmall"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:gravity="center"
+                            android:text="Listen Free"/>
 
                     </RelativeLayout>
 
@@ -167,6 +176,15 @@
                             android:layout_height="match_parent"
                             android:scaleType="centerCrop"
                             android:src="@drawable/bio" />
+
+                        <TextView
+                            android:id="@+id/bioLabel"
+                            style="@style/textInImageSmall"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:gravity="center"
+                            android:text="Biography"/>
 
                     </RelativeLayout>
 

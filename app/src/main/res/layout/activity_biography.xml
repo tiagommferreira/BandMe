@@ -30,7 +30,10 @@
                 <TextView
                     android:id="@+id/bio"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:lineSpacingExtra="14sp"
+                    android:textColor="#252E33"
+                    android:textSize="18sp"/>
 
                 </RelativeLayout>
 

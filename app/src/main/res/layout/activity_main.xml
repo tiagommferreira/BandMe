@@ -11,6 +11,7 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
+
         <include
             android:id="@+id/app_bar"
             layout="@layout/app_bar" />
@@ -19,6 +20,27 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/app_bar">
+
+            <TextView
+                android:id="@+id/HelloText"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="45dp"
+                android:paddingLeft="25dp"
+                android:textSize="30sp"
+                android:text="WELCOME "
+                android:textColor="@color/primaryColor"/>
+
+            <TextView
+                android:id="@+id/descriptionHello"
+                android:layout_below="@+id/HelloText"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="20dp"
+                android:paddingLeft="25dp"
+                android:textSize="20sp"
+                android:text="PLEASE SEARCH FOR A BAND"
+                android:textColor="@color/primaryColor"/>
 
             <com.dexafree.materialList.view.MaterialListView
                 android:id="@+id/material_bandlistview"

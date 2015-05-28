@@ -34,6 +34,7 @@ import java.util.List;
 
 import io.fabric.sdk.android.Fabric;
 import ui.band.me.R;
+import ui.band.me.activities.MainActivity;
 import ui.band.me.adapters.DrawerRecyclerAdapter;
 import ui.band.me.extras.DrawerItemInfo;
 import ui.band.me.extras.Keys;
@@ -136,6 +137,7 @@ public class NavigationDrawerFragment extends Fragment {
                             public void success(Result<User> userResult) {
                                 User user = userResult.data;
                                 showImage(layout, user.profileImageUrlHttps);
+                                ((MainActivity)getActivity()).setWelcome(user.name);
                             }
 
                             @Override
@@ -160,9 +162,8 @@ public class NavigationDrawerFragment extends Fragment {
 
     public static List<DrawerItemInfo> getData() {
         List<DrawerItemInfo> data = new ArrayList<>();
-        //TODO: mudar isto para as cenas que queremos
         int[] icons = {R.drawable.abc_btn_check_material, R.drawable.abc_btn_check_material};
-        String[] titles = {"Item melaco 1", "Item melaco 2"};
+        String[] titles = {"Favourites"};
         for (int i = 0; i < titles.length && i < icons.length; i++) {
             DrawerItemInfo info = new DrawerItemInfo();
             info.iconId = icons[i];

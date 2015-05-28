@@ -17,5 +17,6 @@
     <string name="action_favourite">Favourite</string>
     <string name="title_activity_band_discography">BandDiscographyActivity</string>
     <string name="title_activity_biography">BiographyActivity</string>
+    <string name="title_activity_favourites">FavouritesActivity</string>
 
 </resources>
