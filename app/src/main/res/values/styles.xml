@@ -24,8 +24,7 @@
 
     <style name="textInImageSmall">
         <item name="android:textColor">@color/textInImageTC</item>
-        <item name="android:textSize">12sp</item>
-        <item name="android:background">@color/textInImageBG</item>
+        <item name="android:textSize">14sp</item>
     </style>
 
 </resources>

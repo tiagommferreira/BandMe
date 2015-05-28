@@ -254,15 +254,25 @@ public class BandActivity extends AppCompatActivity {
         if (topTracks.size() != 0) {
             RelativeLayout wrapperLayout = (RelativeLayout) findViewById(R.id.tracksTile);
             LinearLayout topTracksLayout = (LinearLayout) wrapperLayout.findViewById(R.id.tracksLayout);
+
+            LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+            TextView topTrackTextView = new TextView(this);
+            linearParams.setMargins(0,10,0,0);
+            topTrackTextView.setText("Top Tracks: ");
+            topTrackTextView.setTextColor(getResources().getColor(R.color.textInImageTC));
+            topTrackTextView.setTextAppearance(getApplicationContext(), R.style.textInImageSmall);
+            topTrackTextView.setLayoutParams(linearParams);
+
+            topTracksLayout.addView(topTrackTextView);
+
             for (int i = 0; i < topTracks.size(); i++) {
 
-                LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-                TextView topTrackTextView = new TextView(this);
-                linearParams.setMargins(0,25,0,0);
+                topTrackTextView = new TextView(this);
+                linearParams.setMargins(0,10,0,0);
                 topTrackTextView.setText(topTracks.get(i).getName());
-                topTrackTextView.setBackgroundColor(getResources().getColor(R.color.textInImageBG));
                 topTrackTextView.setTextColor(getResources().getColor(R.color.textInImageTC));
                 topTrackTextView.setTextAppearance(getApplicationContext(), R.style.textInImageSmall);
                 topTrackTextView.setLayoutParams(linearParams);

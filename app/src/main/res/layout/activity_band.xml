@@ -48,7 +48,14 @@
                             android:id="@+id/discographyImage"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:src="@drawable/icon_cd" />
+                            android:src="@drawable/icon_cd"/>
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/textInImageBG">
+
+                            </RelativeLayout>
 
                         <TextView
                             android:id="@+id/discographyLabel"
@@ -78,6 +85,13 @@
                             android:layout_height="match_parent"
                             android:src="@drawable/spotify_image" />
 
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/textInImageBG">
+
+                        </RelativeLayout>
+
                         <TextView
                             android:id="@+id/spotifyLabel"
                             style="@style/textInImageSmall"
@@ -105,6 +119,13 @@
                             android:layout_height="match_parent"
                             android:scaleType="centerCrop" />
 
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/textInImageBG">
+
+                        </RelativeLayout>
+
                         <LinearLayout
                             android:id="@+id/tracksLayout"
                             android:layout_width="match_parent"
@@ -130,6 +151,13 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:scaleType="centerCrop" />
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/textInImageBG">
+
+                        </RelativeLayout>
 
                         <RelativeLayout
                             android:id="@+id/recommendedTileLayout"
@@ -176,6 +204,12 @@
                             android:layout_height="match_parent"
                             android:scaleType="centerCrop"
                             android:src="@drawable/bio" />
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/textInImageBG">
+
+                        </RelativeLayout>
 
                         <TextView
                             android:id="@+id/bioLabel"
