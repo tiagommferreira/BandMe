@@ -77,6 +77,7 @@ public class BandActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        drawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
         drawerFragment = NavigationDrawerFragment.getInstance();
 
         if(savedInstanceState != null) {
