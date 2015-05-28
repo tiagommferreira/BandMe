@@ -262,7 +262,7 @@ public class BandActivity extends AppCompatActivity {
             linearParams.setMargins(0,10,0,0);
             topTrackTextView.setText("Top Tracks: ");
             topTrackTextView.setTextColor(getResources().getColor(R.color.textInImageTC));
-            topTrackTextView.setTextAppearance(getApplicationContext(), R.style.textInImageSmall);
+            topTrackTextView.setTextAppearance(getApplicationContext(), R.style.textInImageSmallBigText);
             topTrackTextView.setLayoutParams(linearParams);
 
             topTracksLayout.addView(topTrackTextView);
