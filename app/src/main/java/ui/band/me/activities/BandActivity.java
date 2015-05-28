@@ -243,7 +243,7 @@ public class BandActivity extends AppCompatActivity {
                 band.setImageLink(response.getJSONArray(Keys.BandKeys.KEY_IMAGES).getJSONObject(0).getString("url"));
 
             } catch (JSONException e) {
-                e.printStackTrace();
+
             }
         }
 
@@ -283,7 +283,6 @@ public class BandActivity extends AppCompatActivity {
                 relatedArtistId = String.valueOf(currentItem.getString("id"));
 
             } catch (JSONException e) {
-                e.printStackTrace();
             }
         }
 
