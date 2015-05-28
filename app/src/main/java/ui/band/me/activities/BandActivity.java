@@ -188,7 +188,14 @@ public class BandActivity extends AppCompatActivity {
                 Log.d("band", response.toString());
                 relatedArtist = parseBandJSON(response);
                 setRelatedView();
-                Keys.Database.database.insertBand(relatedArtist);
+                try{
+                    Keys.Database.database.insertBand(relatedArtist);
+
+                }catch(NullPointerException e) {
+                   TextView temp = (TextView) findViewById(R.id.suggestionText);
+                    temp.setText("No Suggestions");
+                }
+
             }
         }).execute();
     }
@@ -328,7 +335,7 @@ public class BandActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_band, menu);
 
         MenuItem fav_button = menu.findItem(R.id.action_favourite);
-        if (Keys.Database.database.existsFavourite(bandName)) {
+        if (Keys.Database.database.existsFavourite(bandId)) {
             fav_button.setIcon(getResources().getDrawable(R.drawable.ic_star_white_24dp));
         }
 
@@ -363,13 +370,13 @@ public class BandActivity extends AppCompatActivity {
             }
         } else if (id == R.id.action_favourite) {
 
-            if (Keys.Database.database.existsFavourite(bandName)) {
+            if (Keys.Database.database.existsFavourite(bandId)) {
                 Log.d("Favourite", "exists");
-                Keys.Database.database.removeFavourite(bandName);
+                Keys.Database.database.removeFavourite(bandId);
                 item.setIcon(getResources().getDrawable(R.drawable.ic_star_outline_white_24dp));
             } else {
                 Log.d("Favourite", "does not exist");
-                Keys.Database.database.insertFavourite(bandName);
+                Keys.Database.database.insertFavourite(bandId);
                 item.setIcon(getResources().getDrawable(R.drawable.ic_star_white_24dp));
             }
 

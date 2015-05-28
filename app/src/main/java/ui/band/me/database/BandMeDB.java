@@ -21,7 +21,7 @@ import ui.band.me.extras.Track;
 public class BandMeDB extends SQLiteOpenHelper implements Serializable{
 
     public BandMeDB(Context context) {
-        super(context, "BandMev4", null, 1);
+        super(context, "BandMev7", null, 1);
     }
 
     @Override
@@ -31,7 +31,7 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
         String userTable = "Create table if not exists User(id INTEGER PRIMARY KEY AUTOINCREMENT, username varchar UNIQUE, avatar varchar, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP);";
 
         //creating band table
-        String bandTable = "Create table if not exists Band(id INTEGER PRIMARY KEY AUTOINCREMENT, name varchar UNIQUE,followers integer, popularity integer, spotify_uri varchar, image_url varchar, biography text, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP);";
+        String bandTable = "Create table if not exists Band(spotify_id varchar PRIMARY KEY, name varchar,followers integer, popularity integer, spotify_uri varchar, image_url varchar, biography text, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP);";
 
         //creating genre table
         String genreTable = "create table if not exists Genre(id INTEGER PRIMARY KEY AUTOINCREMENT, name varchar UNIQUE, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP);";
@@ -40,16 +40,16 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
         String searchTable = "create table if not exists Search(id INTEGER PRIMARY KEY AUTOINCREMENT, information varchar, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP);";
 
         //creating share table
-        String shareTable ="create table if not exists Share (id INTEGER PRIMARY KEY AUTOINCREMENT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, band_id INTEGER, user_id INTEGER, FOREIGN KEY(band_id) REFERENCES Band(id), FOREIGN KEY(user_id) REFERENCES User(id));";
+        String shareTable ="create table if not exists Share (id INTEGER PRIMARY KEY AUTOINCREMENT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, band_id INTEGER, user_id INTEGER, FOREIGN KEY(band_id) REFERENCES Band(spotify_id), FOREIGN KEY(user_id) REFERENCES User(id));";
 
         //creating band_genre table
-        String bandGenreTable ="create table if not exists Band_Genre (band_id INTEGER, genre_id INTEGER, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (band_id) REFERENCES Band(id), FOREIGN KEY (genre_id) REFERENCES Genre(id), CONSTRAINT band_genre PRIMARY KEY(band_id, genre_id));";
+        String bandGenreTable ="create table if not exists Band_Genre (band_id varchar, genre_id INTEGER, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (band_id) REFERENCES Band(spotify_id), FOREIGN KEY (genre_id) REFERENCES Genre(id), CONSTRAINT band_genre PRIMARY KEY(band_id, genre_id));";
 
         //creating favourite table
-        String favouriteTable ="create table if not exists Favourite (band_id INTEGER, user_id INTEGER, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY(band_id) REFERENCES Band(id), FOREIGN KEY(user_id) REFERENCES User(id), CONSTRAINT fav_pk PRIMARY KEY(user_id,band_id));";
+        String favouriteTable ="create table if not exists Favourite (band_id varchar, user_id INTEGER, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY(band_id) REFERENCES Band(spotify_id), FOREIGN KEY(user_id) REFERENCES User(id), CONSTRAINT fav_pk PRIMARY KEY(user_id,band_id));";
 
         //creating song table
-        String songTable = "create table if not exists Song ( id INTEGER PRIMARY KEY AUTOINCREMENT,  name varchar,  band_id INTEGER, image varchar, FOREIGN KEY(band_id) REFERENCES Band(id) )";
+        String songTable = "create table if not exists Song ( id INTEGER PRIMARY KEY AUTOINCREMENT,  name varchar,  band_id varchar, image varchar, FOREIGN KEY(band_id) REFERENCES Band(id) )";
 
         db.execSQL(userTable);
         db.execSQL(bandTable);
@@ -151,6 +151,7 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
 
             // insert values
             values.put("name", band.getName());
+            values.put("spotify_id",band.getId());
             values.put("followers",band.getFollowers());
             values.put("spotify_uri",band.getUri());
             values.put("popularity",band.getPopularity());
@@ -217,30 +218,16 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
         return bandArrayList;
     }
 
-    public void insertTracks(String bandName, ArrayList<Track> topTracks) {
+    public void insertTracks(String bandId, ArrayList<Track> topTracks) {
         //get a writable database
         SQLiteDatabase database = this.getWritableDatabase();
-
-        //creating timestamp
-        java.util.Date date= new java.util.Date();
-
-        bandName = bandName.replaceAll("\'","");
-
-        String select = "SELECT id from band where name =" + "'" + bandName + "'";
-
-        String bandId="";
-        Cursor firstCursor = database.rawQuery(select,null);
-        if(firstCursor.moveToFirst()) {
-            bandId = firstCursor.getString(0);
-        }
-
 
         for(int i=0;i<topTracks.size();i++) {
             //using content values in order to easily insert into the SQLite database
             ContentValues values = new ContentValues();
             topTracks.get(i).setName(topTracks.get(i).getName().replaceAll("\'",""));
             values.put("name", topTracks.get(i).getName());
-            values.put("band_id",Integer.valueOf(bandId));
+            values.put("band_id",bandId);
             values.put("image",topTracks.get(i).getAlbum_image_url());
 
             //insert into the database and release the resources
@@ -299,31 +286,17 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
 
     }
 
-    public void insertFavourite(String band_name) {
+    public void insertFavourite(String bandId) {
         //get a writable database
         SQLiteDatabase database = this.getWritableDatabase();
-        int band_id = 0;
-        //get the band id from Band table
-        band_name = band_name.replaceAll("\'","");
-
-        String selectQuery = "SELECT id FROM Band where name =" + "'" + band_name + "'";
-
-        Cursor cursor = database.rawQuery(selectQuery, null);
-
-        if (cursor.moveToFirst()) {
-            do {
-                band_id = cursor.getInt(0);
-            } while (cursor.moveToNext());
-        }
 
         //using content values in order to easily insert into the SQLite database
         ContentValues values = new ContentValues();
 
         //creating timestamp
         java.util.Date date= new java.util.Date();
-        Log.d("Band id to favourite",String.valueOf(band_id));
         // insert values
-        values.put("band_id", band_id);
+        values.put("band_id", bandId);
         values.put("user_id", 1);
         values.put("timestamp",new Timestamp(date.getTime()).toString());
 
@@ -339,44 +312,25 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
         database.close();
     }
 
-    public boolean existsFavourite(String bandName) {
-
-        bandName = bandName.replaceAll("\'","");
+    public boolean existsFavourite(String bandId) {
+        String selectQuery = "SELECT * FROM FAVOURITE WHERE band_id = " +  "'" + bandId + "'";
 
         SQLiteDatabase database = this.getWritableDatabase();
-        String selectQuery = "SELECT id FROM Band where name =" + "'" + bandName + "'";
-        int band_id = 0;
         Cursor cursor = database.rawQuery(selectQuery, null);
 
         if (cursor.moveToFirst()) {
             do {
-                band_id = cursor.getInt(0);
+                String banda_id = cursor.getString(0);
+                Log.d("favourited",banda_id);
             } while (cursor.moveToNext());
         }
-
-        String selectFavouriteQuery = "SELECT band_id FROM Favourite where band_id = "  + band_id;
-        cursor = database.rawQuery(selectFavouriteQuery,null);
-
         return cursor.moveToFirst();
     }
 
-    public void removeFavourite(String bandName) {
-        bandName = bandName.replaceAll("\'","");
+    public void removeFavourite(String bandId) {
 
-        String selectQuery = "SELECT id FROM Band where name =" + "'" + bandName + "'";
-        int band_id = 0;
         SQLiteDatabase database = this.getWritableDatabase();
-        Cursor cursor = database.rawQuery(selectQuery, null);
-
-        if (cursor.moveToFirst()) {
-            do {
-                band_id = cursor.getInt(0);
-            } while (cursor.moveToNext());
-        }
-
-        String removeQuery = "DELETE FROM Favourite WHERE band_id = " + band_id;
-        if(database.delete("Favourite", "band_id="+band_id, null)>0) {
-            Log.d("Removed favourite",String.valueOf(band_id));
+        if(database.delete("Favourite", "band_id="+"'" + bandId + "'", null)>0) {
         }
     }
 }
