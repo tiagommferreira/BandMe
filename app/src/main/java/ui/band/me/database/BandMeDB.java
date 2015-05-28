@@ -90,6 +90,10 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
         //get a writable database
         SQLiteDatabase database = this.getWritableDatabase();
 
+        search = search.replaceAll("\'","");
+
+        Log.d("Search saved: ", search);
+
         if(!itemExistsInDb(database, "Search", "information", search)){
             //using content values in order to easily insert into the SQLite database
             ContentValues values = new ContentValues();
@@ -136,6 +140,7 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
     public void insertBand(Band band) {
         //get a writable database
         SQLiteDatabase database = this.getWritableDatabase();
+        band.setName(band.getName().replaceAll("\'",""));
 
         if(!itemExistsInDb(database, "Band", "name", band.getName())) {
             //using content values in order to easily insert into the SQLite database
@@ -188,6 +193,8 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
 
     public ArrayList<Band> getBandsByName(String name) {
 
+        name = name.replaceAll("\'","");
+
         ArrayList<Band> bandArrayList = new ArrayList<Band>();
 
         String selectQuery = "SELECT * FROM Band where name =" + "'" + name + "'";
@@ -217,6 +224,8 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
         //creating timestamp
         java.util.Date date= new java.util.Date();
 
+        bandName = bandName.replaceAll("\'","");
+
         String select = "SELECT id from band where name =" + "'" + bandName + "'";
 
         String bandId="";
@@ -229,7 +238,8 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
         for(int i=0;i<topTracks.size();i++) {
             //using content values in order to easily insert into the SQLite database
             ContentValues values = new ContentValues();
-            values.put("name",topTracks.get(i).getName());
+            topTracks.get(i).setName(topTracks.get(i).getName().replaceAll("\'",""));
+            values.put("name", topTracks.get(i).getName());
             values.put("band_id",Integer.valueOf(bandId));
             values.put("image",topTracks.get(i).getAlbum_image_url());
 
@@ -247,6 +257,8 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
     }
 
     public ArrayList<Track> getTracksFromBand(String bandName) {
+        bandName = bandName.replaceAll("\'","");
+
         SQLiteDatabase database = this.getWritableDatabase();
 
         ArrayList<Track> trackList = new ArrayList<Track>();
@@ -277,6 +289,8 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
     }
 
     private boolean itemExistsInDb(SQLiteDatabase database, String table, String param, String value) {
+        value=value.replaceAll("\'","");
+
         String selectQuery = "SELECT * FROM "+ table + "  where " + param + " = " + "'" + value + "'";
 
         Cursor cursor = database.rawQuery(selectQuery, null);
@@ -290,6 +304,8 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
         SQLiteDatabase database = this.getWritableDatabase();
         int band_id = 0;
         //get the band id from Band table
+        band_name = band_name.replaceAll("\'","");
+
         String selectQuery = "SELECT id FROM Band where name =" + "'" + band_name + "'";
 
         Cursor cursor = database.rawQuery(selectQuery, null);
@@ -325,6 +341,8 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
 
     public boolean existsFavourite(String bandName) {
 
+        bandName = bandName.replaceAll("\'","");
+
         SQLiteDatabase database = this.getWritableDatabase();
         String selectQuery = "SELECT id FROM Band where name =" + "'" + bandName + "'";
         int band_id = 0;
@@ -343,6 +361,8 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
     }
 
     public void removeFavourite(String bandName) {
+        bandName = bandName.replaceAll("\'","");
+
         String selectQuery = "SELECT id FROM Band where name =" + "'" + bandName + "'";
         int band_id = 0;
         SQLiteDatabase database = this.getWritableDatabase();

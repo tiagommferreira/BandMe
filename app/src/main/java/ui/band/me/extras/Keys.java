@@ -29,6 +29,7 @@ public interface Keys {
     public class API {
         public static final String URL_SPOTIFY_SEARCH =  "https://api.spotify.com/v1/search";
         public static final String URL_SPOTIFY_ARTISTS =  "https://api.spotify.com/v1/artists/";
+        public static final String URL_ECHONEST_BIO =  "http://developer.echonest.com/api/v4/artist/biographies?api_key=JASHGMCBKYSZEFPXE";
         public static final String TWITTER_KEY = "ehKpzDxn7TciKfMmSfjnNlAL9";
         public static final String TWITTER_SECRET = "j1ZdbXDZDzr4mA4mxzWO4jIYhuDB11FwXHT9TNPm5PJuIYLJsZ";
         public static String TWITTER_ACCESS_TOKEN = null;

@@ -126,14 +126,6 @@ public class MainActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 searchClearButton.setEnabled(true);
                 searchClearButton.setVisibility(View.VISIBLE);
-                if (isOnline()) {
-                    sendBandRequest(s.toString());
-                } else {
-                    mBandList = Keys.Database.database.getBandsByName(s.toString());
-                    Log.d("new answer",String.valueOf(mBandList.size()));
-                    removePrevCards();
-                    addCards();
-                }
             }
 
             @Override
@@ -144,6 +136,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    if (isOnline()) {
+                        sendBandRequest(Normalizer.normalize(v.getText().toString(), Normalizer.Form.NFD).replaceAll("\'", ""));
+                    } else {
+                        mBandList = Keys.Database.database.getBandsByName(v.getText().toString());
+                        Log.d("new answer",String.valueOf(mBandList.size()));
+                        removePrevCards();
+                        addCards();
+                    }
+
                     Keys.Database.database.insertSearch(v.getText().toString());
 
                     // hide virtual keyboard

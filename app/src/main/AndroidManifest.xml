@@ -24,7 +24,7 @@
         <activity
             android:name=".activities.BandActivity"
             android:label="@string/title_activity_band"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
@@ -32,7 +32,15 @@
         <activity
             android:name=".activities.BandDiscographyActivity"
             android:label="@string/title_activity_band_discography"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.BandActivity" />
+        </activity>
+        <activity
+            android:name=".activities.BiographyActivity"
+            android:label="@string/title_activity_biography"
+            android:launchMode="singleTop" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.BandActivity" />

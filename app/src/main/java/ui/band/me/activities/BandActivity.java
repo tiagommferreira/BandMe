@@ -75,11 +75,9 @@ public class BandActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if(savedInstanceState != null) {
-            Log.d("NAO É NULL", "TA NO SITIO CERTO");
             band = (Band) savedInstanceState.getSerializable(BAND);
         }
         else {
-            Log.d("TA NULL", "TA NO SITIO ERRADO");
             Intent intent = getIntent();
             band = (Band) intent.getSerializableExtra("band");
         }
@@ -137,7 +135,20 @@ public class BandActivity extends AppCompatActivity {
 
         recommendedTile = findViewById(R.id.recommendedTile);
         bioTile = findViewById(R.id.bioTile);
+        bioTile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startBioActivity();
+            }
+        });
 
+    }
+
+    private void startBioActivity() {
+        Intent i = new Intent(this, BiographyActivity.class);
+        i.putExtra("bandLink", band.getImageLink());
+        i.putExtra("bandName", band.getName());
+        startActivity(i);
     }
 
     private void startDiscographyActivity() {
@@ -240,7 +251,7 @@ public class BandActivity extends AppCompatActivity {
                 topTrackTextView.setText(topTracks.get(i).getName());
                 topTrackTextView.setBackgroundColor(getResources().getColor(R.color.textInImageBG));
                 topTrackTextView.setTextColor(getResources().getColor(R.color.textInImageTC));
-                topTrackTextView.setTextAppearance(getApplicationContext(),R.style.textInImageSmall);
+                topTrackTextView.setTextAppearance(getApplicationContext(), R.style.textInImageSmall);
                 topTrackTextView.setLayoutParams(linearParams);
 
                 topTracksLayout.addView(topTrackTextView);
@@ -248,7 +259,6 @@ public class BandActivity extends AppCompatActivity {
             Picasso.with(this).load(topTracks.get(0).getAlbum_image_url()).into(tracksImage);
         }
     }
-
 
     private String parseRelatedJSON(JSONObject response) {
         String relatedArtistId = "";
