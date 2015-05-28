@@ -63,6 +63,8 @@ public class NavigationDrawerFragment extends Fragment {
     private RecyclerView recyclerView;
     private DrawerRecyclerAdapter recyclerAdapter;
 
+    private static NavigationDrawerFragment instance;
+
 
     public NavigationDrawerFragment() {
         // Required empty public constructor
@@ -71,6 +73,9 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        this.instance = this;
+
         mUserLearnedDrawer = Boolean.valueOf(readFromPreferences(getActivity(), KEY_USER_LEARNED_DRAWER, "false"));
         if (savedInstanceState != null) {
             mFromSavedInstanceState = true;
@@ -80,6 +85,10 @@ public class NavigationDrawerFragment extends Fragment {
         Fabric.with(this.getActivity(), new TwitterCore(authConfig));
 
 
+    }
+
+    public static NavigationDrawerFragment getInstance() {
+        return instance;
     }
 
     @Override

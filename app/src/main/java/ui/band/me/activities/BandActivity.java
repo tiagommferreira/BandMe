@@ -36,6 +36,7 @@ import ui.band.me.R;
 import ui.band.me.extras.Band;
 import ui.band.me.extras.Keys;
 import ui.band.me.extras.Track;
+import ui.band.me.fragments.NavigationDrawerFragment;
 import ui.band.me.fragments.ShareDialogFragment;
 
 public class BandActivity extends AppCompatActivity {
@@ -62,6 +63,8 @@ public class BandActivity extends AppCompatActivity {
 
     private Band band;
 
+    private NavigationDrawerFragment drawerFragment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +76,8 @@ public class BandActivity extends AppCompatActivity {
 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        drawerFragment = NavigationDrawerFragment.getInstance();
 
         if(savedInstanceState != null) {
             band = (Band) savedInstanceState.getSerializable(BAND);

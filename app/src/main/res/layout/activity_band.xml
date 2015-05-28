@@ -1,161 +1,171 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#C3C3C3">
+    android:fitsSystemWindows="true">
 
-    <ScrollView
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="none">
+        android:layout_height="match_parent"
+        android:background="#C3C3C3">
 
-        <RelativeLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/bandPic"
-                android:layout_width="match_parent"
-                android:layout_height="220dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:adjustViewBounds="true"
-                android:scaleType="centerCrop" />
+            android:layout_height="wrap_content"
+            android:scrollbars="none">
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/bandPic"
-                android:padding="16dp">
+                android:layout_height="wrap_content">
 
-
-                <RelativeLayout
-                    android:id="@+id/discographyTile"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:background="#FFFFFF"
-                    android:clickable="true"
-                    android:elevation="2dp">
-
-                    <ImageView
-                        android:id="@+id/discographyImage"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/icon_cd"/>
-
-                    <TextView
-                        android:id="@+id/discographyLabel"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:gravity="center"
-                        style="@style/textInImageSmall"
-                        android:text="Discography"/>
-
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/spotifyTile"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_below="@id/discographyTile"
-                    android:layout_marginTop="20dp"
-                    android:background="#FFFFFF"
-                    android:clickable="true"
-                    android:elevation="2dp">
-
-                    <ImageView
-                        android:id="@+id/spotifyImage"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/spotify_image" />
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/tracksTile"
-                    android:layout_width="220dp"
+                <ImageView
+                    android:id="@+id/bandPic"
+                    android:layout_width="match_parent"
                     android:layout_height="220dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_toRightOf="@id/discographyTile"
-                    android:background="#FFFFFF"
-                    android:clickable="true"
-                    android:elevation="2dp">
-
-                    <ImageView
-                        android:id="@+id/tracksImage"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop" />
-
-                    <LinearLayout
-                        android:id="@+id/tracksLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
-
-                    </LinearLayout>
-
-                </RelativeLayout>
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop" />
 
                 <RelativeLayout
-                    android:id="@+id/recommendedTile"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_below="@id/spotifyTile"
-                    android:layout_marginTop="20dp"
-                    android:background="@drawable/custom_bg"
-                    android:clickable="true"
-                    android:elevation="2dp">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/bandPic"
+                    android:padding="16dp">
 
-                    <ImageView
-                        android:id="@+id/recommendedImage"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop" />
 
                     <RelativeLayout
-                        android:id="@+id/recommendedTileLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:id="@+id/discographyTile"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:background="#FFFFFF"
+                        android:clickable="true"
+                        android:elevation="2dp">
+
+                        <ImageView
+                            android:id="@+id/discographyImage"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/icon_cd" />
+
+                        <TextView
+                            android:id="@+id/discographyLabel"
+                            style="@style/textInImageSmall"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:gravity="center"
+                            android:text="Discography" />
+
 
                     </RelativeLayout>
 
-                    <TextView
-                        android:id="@+id/recommendedLabel"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:gravity="center"
-                        style="@style/textInImageSmall"/>
+                    <RelativeLayout
+                        android:id="@+id/spotifyTile"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_below="@id/discographyTile"
+                        android:layout_marginTop="20dp"
+                        android:background="#FFFFFF"
+                        android:clickable="true"
+                        android:elevation="2dp">
 
-                    <TextView
-                        android:layout_above="@+id/recommendedLabel"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:gravity="center"
-                        android:text="We suggest"
-                        style="@style/textInImageSmall"/>
+                        <ImageView
+                            android:id="@+id/spotifyImage"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/spotify_image" />
 
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/bioTile"
-                    android:layout_width="220dp"
-                    android:layout_height="100dp"
-                    android:layout_below="@id/tracksTile"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_toRightOf="@id/recommendedTile"
-                    android:background="#FFFFFF"
-                    android:clickable="true"
-                    android:elevation="2dp">
+                    </RelativeLayout>
 
                     <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:id="@+id/tracksTile"
+                        android:layout_width="220dp"
+                        android:layout_height="220dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_toRightOf="@id/discographyTile"
+                        android:background="#FFFFFF"
+                        android:clickable="true"
+                        android:elevation="2dp">
+
+                        <ImageView
+                            android:id="@+id/tracksImage"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop" />
+
+                        <LinearLayout
+                            android:id="@+id/tracksLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+
+                        </LinearLayout>
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/recommendedTile"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_below="@id/spotifyTile"
+                        android:layout_marginTop="20dp"
+                        android:background="@drawable/custom_bg"
+                        android:clickable="true"
+                        android:elevation="2dp">
+
+                        <ImageView
+                            android:id="@+id/recommendedImage"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop" />
+
+                        <RelativeLayout
+                            android:id="@+id/recommendedTileLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                        </RelativeLayout>
+
+                        <TextView
+                            android:id="@+id/recommendedLabel"
+                            style="@style/textInImageSmall"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:gravity="center" />
+
+                        <TextView
+                            style="@style/textInImageSmall"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_above="@+id/recommendedLabel"
+                            android:layout_centerVertical="true"
+                            android:gravity="center"
+                            android:text="We suggest" />
+
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/bioTile"
+                        android:layout_width="220dp"
+                        android:layout_height="100dp"
+                        android:layout_below="@id/tracksTile"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_toRightOf="@id/recommendedTile"
+                        android:background="#FFFFFF"
+                        android:clickable="true"
+                        android:elevation="2dp">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/bio" />
 
                     </RelativeLayout>
 
@@ -163,13 +173,21 @@
 
             </RelativeLayout>
 
-        </RelativeLayout>
+        </ScrollView>
 
-    </ScrollView>
+        <include
+            android:id="@+id/app_bar"
+            layout="@layout/app_bar_band" />
 
-    <include
-        android:id="@+id/app_bar"
-        layout="@layout/app_bar_band" />
+    </RelativeLayout>
 
-</RelativeLayout>
+    <fragment
+        android:id="@+id/fragment_navigation_drawer"
+        android:name="ui.band.me.fragments.NavigationDrawerFragment"
+        android:layout_width="@dimen/nav_drawer_width"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:layout="@layout/fragment_navigation_drawer"
+        tools:layout="@layout/fragment_navigation_drawer" />
 
+</android.support.v4.widget.DrawerLayout>
