@@ -44,6 +44,7 @@ public class BandDiscographyActivity extends AppCompatActivity {
 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Discography");
 
         Intent i = getIntent();
         bandId = i.getStringExtra("bandId");
@@ -146,9 +147,7 @@ public class BandDiscographyActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        } else if(id == R.id.home) {
+        if(id == R.id.home) {
             NavUtils.navigateUpFromSameTask(this);
             return true;
         }

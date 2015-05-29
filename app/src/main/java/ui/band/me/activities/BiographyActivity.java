@@ -38,12 +38,12 @@ public class BiographyActivity extends AppCompatActivity {
 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Biography");
 
         Intent intent = getIntent();
         bandImageLink = intent.getStringExtra("bandLink");
         bandName = intent.getStringExtra("bandName");
 
-        getSupportActionBar().setTitle(bandName);
 
         bandPicture = (ImageView) findViewById(R.id.bandPic);
         Picasso.with(this).load(bandImageLink).into(bandPicture);
@@ -95,9 +95,7 @@ public class BiographyActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+
 
         return super.onOptionsItemSelected(item);
     }
