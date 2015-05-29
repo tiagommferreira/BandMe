@@ -283,8 +283,10 @@ public class MainActivity extends AppCompatActivity {
 
         // Pass the activity result to the fragment, which will
         // then pass the result to the login button.
-        if (drawerFragment != null) {
-            drawerFragment.onActivityResult(requestCode, resultCode, data);
+        if(isOnline()) {
+            if (drawerFragment != null) {
+                drawerFragment.onActivityResult(requestCode, resultCode, data);
+            }
         }
     }
 

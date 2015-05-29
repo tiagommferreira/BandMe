@@ -80,10 +80,9 @@ public class BandActivity extends AppCompatActivity {
         drawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
         drawerFragment = NavigationDrawerFragment.getInstance();
 
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             band = (Band) savedInstanceState.getSerializable(BAND);
-        }
-        else {
+        } else {
             Intent intent = getIntent();
             band = (Band) intent.getSerializableExtra("band");
         }
@@ -94,19 +93,23 @@ public class BandActivity extends AppCompatActivity {
         bandPicture = (ImageView) findViewById(R.id.bandPic);
         Picasso.with(this).load(band.getImageLink()).into(bandPicture);
 
-        if (isOnline()){
-            bandId = band.getId();
-        }
+        bandId = band.getId();
 
         discographyTile = findViewById(R.id.discographyTile);
-        discographyTile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startDiscographyActivity();
-            }
-        });
+
+        if (isOnline()) {
+            discographyTile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startDiscographyActivity();
+                }
+            });
+        }
+
 
         spotifyTile = findViewById(R.id.spotifyTile);
+
+
         spotifyTile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,19 +118,21 @@ public class BandActivity extends AppCompatActivity {
             }
         });
 
+
         tracksTile = findViewById(R.id.tracksTile);
         tracksImage = (ImageView) tracksTile.findViewById(R.id.tracksImage);
         recommendedTile = findViewById(R.id.recommendedTile);
         recommendedImage = (ImageView) recommendedTile.findViewById(R.id.recommendedImage);
 
+        if (isOnline()) {
+            recommendedTile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startBandActivity();
+                }
+            });
 
-        recommendedTile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startBandActivity();
-            }
-        });
-
+        }
 
         if (isOnline()) {
             sendTrackRequest();
@@ -135,19 +140,21 @@ public class BandActivity extends AppCompatActivity {
             //adds top tracks to database
         } else {
             //checks in db instead of the required band
-            this.topTracks = Keys.Database.database.getTracksFromBand(bandName);
+            this.topTracks = Keys.Database.database.getTracksFromBand(bandId);
             setTextViews();
         }
 
         recommendedTile = findViewById(R.id.recommendedTile);
         bioTile = findViewById(R.id.bioTile);
-        bioTile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startBioActivity();
-            }
-        });
 
+        if (isOnline()) {
+            bioTile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startBioActivity();
+                }
+            });
+        }
     }
 
     private void startBioActivity() {
@@ -188,11 +195,11 @@ public class BandActivity extends AppCompatActivity {
                 Log.d("band", response.toString());
                 relatedArtist = parseBandJSON(response);
                 setRelatedView();
-                try{
+                try {
                     Keys.Database.database.insertBand(relatedArtist);
 
-                }catch(NullPointerException e) {
-                   TextView temp = (TextView) findViewById(R.id.suggestionText);
+                } catch (NullPointerException e) {
+                    TextView temp = (TextView) findViewById(R.id.suggestionText);
                     temp.setText("No Suggestions");
                 }
 
@@ -205,7 +212,7 @@ public class BandActivity extends AppCompatActivity {
             @Override
             public void requestCompleted(JSONObject response) {
                 topTracks = parseTracksJSON(response);
-                Keys.Database.database.insertTracks(bandName, topTracks);
+                Keys.Database.database.insertTracks(bandId, topTracks);
                 setTextViews();
             }
         }).execute();
@@ -259,7 +266,7 @@ public class BandActivity extends AppCompatActivity {
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
             TextView topTrackTextView = new TextView(this);
-            linearParams.setMargins(0,10,0,0);
+            linearParams.setMargins(0, 10, 0, 0);
             topTrackTextView.setText("Top Tracks: ");
             topTrackTextView.setTextColor(getResources().getColor(R.color.textInImageTC));
             topTrackTextView.setTextAppearance(getApplicationContext(), R.style.textInImageSmallBigText);
@@ -271,7 +278,7 @@ public class BandActivity extends AppCompatActivity {
 
 
                 topTrackTextView = new TextView(this);
-                linearParams.setMargins(0,10,0,0);
+                linearParams.setMargins(0, 10, 0, 0);
                 topTrackTextView.setText(topTracks.get(i).getName());
                 topTrackTextView.setTextColor(getResources().getColor(R.color.textInImageTC));
                 topTrackTextView.setTextAppearance(getApplicationContext(), R.style.textInImageSmall);

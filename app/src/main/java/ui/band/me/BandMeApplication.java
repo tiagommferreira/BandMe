@@ -3,9 +3,6 @@ package ui.band.me;
 import android.app.Application;
 import android.content.Context;
 
-/**
- * Created by Tiago on 05/05/2015.
- */
 public class BandMeApplication extends Application {
     private static BandMeApplication sInstance;
 

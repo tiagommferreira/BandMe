@@ -21,7 +21,7 @@ import ui.band.me.extras.Track;
 public class BandMeDB extends SQLiteOpenHelper implements Serializable{
 
     public BandMeDB(Context context) {
-        super(context, "BandMev7", null, 1);
+        super(context, "BandMev8", null, 1);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
         String favouriteTable ="create table if not exists Favourite (band_id varchar, user_id INTEGER, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY(band_id) REFERENCES Band(spotify_id), FOREIGN KEY(user_id) REFERENCES User(id), CONSTRAINT fav_pk PRIMARY KEY(user_id,band_id));";
 
         //creating song table
-        String songTable = "create table if not exists Song ( id INTEGER PRIMARY KEY AUTOINCREMENT,  name varchar,  band_id varchar, image varchar, FOREIGN KEY(band_id) REFERENCES Band(id) )";
+        String songTable = "create table if not exists Song ( id INTEGER PRIMARY KEY AUTOINCREMENT,  name varchar,  band_id varchar, image varchar, FOREIGN KEY(band_id) REFERENCES Band(spotify_id) )";
 
         db.execSQL(userTable);
         db.execSQL(bandTable);
@@ -195,10 +195,14 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
     public ArrayList<Band> getBandsByName(String name) {
 
         name = name.replaceAll("\'","");
+        if(name.length()>0)
+            if(name.charAt(name.length()-1) == ' ') {
+                name = name.substring(0,name.length()-1);
+            }
 
         ArrayList<Band> bandArrayList = new ArrayList<Band>();
 
-        String selectQuery = "SELECT * FROM Band where name =" + "'" + name + "'";
+        String selectQuery = "SELECT * FROM Band where name like " + "'%" + name + "%' COLLATE NOCASE";
 
         SQLiteDatabase database = this.getWritableDatabase();
 
@@ -211,6 +215,7 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
                 currentBand.setFollowers(Integer.valueOf(cursor.getString(2)));
                 currentBand.setPopularity(Integer.valueOf(cursor.getString(3)));
                 currentBand.setUri(cursor.getString(4));
+                currentBand.setId(cursor.getString(0));
                 currentBand.setImageLink(cursor.getString(5));
                 bandArrayList.add(currentBand);
             } while (cursor.moveToNext());
@@ -233,7 +238,7 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
             //insert into the database and release the resources
             try{
                 database.insert("Song", null , values);
-                Log.d("Song saved",values.get("name").toString());
+                System.out.println(values.get("band_id").toString() + " " + values.get("name").toString());
             }catch(SQLiteConstraintException e){
                 database.update("Song", values,"name" +" = '"+ values.get("name") + "'", null);
                 Log.d("updated",".");
@@ -243,24 +248,12 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
 
     }
 
-    public ArrayList<Track> getTracksFromBand(String bandName) {
-        bandName = bandName.replaceAll("\'","");
-
+    public ArrayList<Track> getTracksFromBand(String bandId) {
         SQLiteDatabase database = this.getWritableDatabase();
 
         ArrayList<Track> trackList = new ArrayList<Track>();
 
-        Log.d("band name",bandName);
-
-        String select = "SELECT id from band where name =" + "'" + bandName + "'";
-
-        String bandId="";
-        Cursor firstCursor = database.rawQuery(select,null);
-        if(firstCursor.moveToFirst()) {
-            bandId = firstCursor.getString(0);
-        }
-
-        String selectQuery = "SELECT * FROM Song where band_id =" + "'" + bandId + "'";
+        String selectQuery = "SELECT * FROM SONG WHERE band_id = " +  "'" + bandId + "'";
 
         Cursor cursor = database.rawQuery(selectQuery, null);
 
@@ -270,7 +263,14 @@ public class BandMeDB extends SQLiteOpenHelper implements Serializable{
                 currentTrack.setName(cursor.getString(1));
                 currentTrack.setAlbum_image_url(cursor.getString(3));
                 trackList.add(currentTrack);
+                System.out.println("Current track:" + currentTrack.getName());
             } while (cursor.moveToNext());
+        }
+
+        System.out.println("Get tracks");
+        for(int i=0;i<trackList.size();i++)
+        {
+            System.out.println(trackList.get(i).getName());
         }
         return trackList;
     }

@@ -4,6 +4,8 @@ package ui.band.me.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -118,6 +120,7 @@ public class NavigationDrawerFragment extends Fragment {
 
 
         loginButton = (TwitterLoginButton) layout.findViewById(R.id.login_button);
+
         loginButton.setCallback(new Callback<TwitterSession>() {
             @Override
             public void success(Result<TwitterSession> result) {
@@ -137,7 +140,7 @@ public class NavigationDrawerFragment extends Fragment {
                             public void success(Result<User> userResult) {
                                 User user = userResult.data;
                                 showImage(layout, user.profileImageUrlHttps);
-                                ((MainActivity)getActivity()).setWelcome(user.name);
+                                ((MainActivity) getActivity()).setWelcome(user.name);
                             }
 
                             @Override
@@ -155,15 +158,21 @@ public class NavigationDrawerFragment extends Fragment {
             }
         });
 
-
         return layout;
 
+    }
+
+    private boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
     public static List<DrawerItemInfo> getData() {
         List<DrawerItemInfo> data = new ArrayList<>();
         int[] icons = {R.drawable.abc_btn_check_material, R.drawable.abc_btn_check_material};
-        String[] titles = {"Favourites"};
+        String[] titles = {};
         for (int i = 0; i < titles.length && i < icons.length; i++) {
             DrawerItemInfo info = new DrawerItemInfo();
             info.iconId = icons[i];
