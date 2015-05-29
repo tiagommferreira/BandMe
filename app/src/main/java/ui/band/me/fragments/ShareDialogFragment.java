@@ -44,7 +44,7 @@ public class ShareDialogFragment extends DialogFragment {
         builder.setView(v);
 
         final EditText tweetText = (EditText) v.findViewById(R.id.shareMessage);
-        tweetText.setText("I just found " + getArguments().getString("bandName") + " with BandMe  @rjrloureiro @Asura_14");
+        tweetText.setText("I just found " + getArguments().getString("bandName") + " with #BandMe App!");
 
 
         builder.setPositiveButton("Tweet", new DialogInterface.OnClickListener() {

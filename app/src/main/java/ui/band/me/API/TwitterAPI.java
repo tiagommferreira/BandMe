@@ -88,11 +88,6 @@ public class TwitterAPI extends AsyncTask<String,String,String> {
         String timeStamp = String.valueOf(new Date().getTime() / 1000);
         String version = "1.0";
 
-        //Generating the Parameter String:
-        //Add request parameters and status message alphabetically (DO NOT ADD SIGNATURE)
-        //Encode keys and values while adding
-        //Insert = character between each key and its value
-        //Add an ampersand (&) to the end if there are more parameters
         String parameterString =
                 percentEncode(oauth_consumer_key) + "=" + percentEncode(Keys.API.TWITTER_KEY) + "&" +
                         percentEncode(oauth_nonce) + "=" + percentEncode(nonce) + "&" +
