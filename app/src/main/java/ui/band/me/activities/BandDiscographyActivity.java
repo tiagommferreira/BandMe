@@ -1,5 +1,6 @@
 package ui.band.me.activities;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -60,7 +61,12 @@ public class BandDiscographyActivity extends AppCompatActivity {
             @Override
             public void onClick(View view, int position) {
                 Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(albums.get(position).getUri()));
-                startActivity(i);
+                try {
+                    startActivity(i);
+                } catch(ActivityNotFoundException e) {
+                    
+                }
+
             }
 
             @Override

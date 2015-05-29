@@ -1,5 +1,6 @@
 package ui.band.me.activities;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -114,7 +115,11 @@ public class BandActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(band.getUri()));
-                startActivity(i);
+                try {
+                    startActivity(i);
+                } catch (ActivityNotFoundException e){
+
+                }
             }
         });
 
